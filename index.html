@@ -43,6 +43,8 @@
         .kind-property { background-color: #74b9ff; }
         .kind-class { background-color: #ffeaa7; color: #555; }
         .kind-collection { background-color: #55efc4; color: #555; }
+        
+        #member-search { width: 100%; box-sizing: border-box; padding: 4px; margin-top: 5px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; }
 
         /* Center Content Info */
         #object-info-container { padding: 20px; }
@@ -67,9 +69,10 @@
 </head>
 <body>
     <div id="top-bar">
-        <span style="font-weight: bold;">Target:</span>
+        <button id="btn-undo" disabled title="Go Back">Undo</button>
+        <button id="btn-redo" disabled title="Go Forward">Redo</button>
+        <span style="font-weight: bold; margin-left: 10px;">Target:</span>
         <input type="text" id="target-input" placeholder="Select an object...">
-        <button id="refresh-objs">Refresh All</button>
     </div>
     
     <div id="main-content">
@@ -92,7 +95,10 @@
 
         <!-- Right Panel: Members / Inspector -->
         <div id="right-panel" class="panel">
-            <div class="panel-header">Members / Inspector</div>
+            <div class="panel-header" style="flex-direction: column; align-items: flex-start;">
+                <span>Members / Inspector</span>
+                <input type="text" id="member-search" placeholder="Regex filter (e.g. ^get_.*)">
+            </div>
             <div id="inspector-content" class="panel-body"></div>
         </div>
     </div>
@@ -110,6 +116,7 @@
 
     <script>
         let currentTarget = "";
+        let currentMembers = [];
 
         window.addEventListener('pywebviewready', async function() {
             console.log("PyWebview Ready");
@@ -157,11 +164,42 @@
             }
         }
 
-        document.getElementById('refresh-objs').onclick = () => { loadGlobalVars(); inspectTarget(); };
-        document.getElementById('btn-refresh-vars').onclick = loadGlobalVars;
-
         // --- Target & Inspection ---
         const targetInput = document.getElementById('target-input');
+        
+        // History Management
+        let historyStack = [];
+        let historyIndex = -1;
+        let isNavigatingHistory = false;
+
+        const btnUndo = document.getElementById('btn-undo');
+        const btnRedo = document.getElementById('btn-redo');
+
+        function updateHistoryUI() {
+            btnUndo.disabled = historyIndex <= 0;
+            btnRedo.disabled = historyIndex >= historyStack.length - 1;
+        }
+
+        btnUndo.onclick = () => {
+            if (historyIndex > 0) {
+                historyIndex--;
+                isNavigatingHistory = true;
+                setTarget(historyStack[historyIndex]);
+                isNavigatingHistory = false;
+                updateHistoryUI();
+            }
+        };
+
+        btnRedo.onclick = () => {
+            if (historyIndex < historyStack.length - 1) {
+                historyIndex++;
+                isNavigatingHistory = true;
+                setTarget(historyStack[historyIndex]);
+                isNavigatingHistory = false;
+                updateHistoryUI();
+            }
+        };
+
         targetInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 setTarget(targetInput.value);
@@ -169,8 +207,19 @@
         });
 
         function setTarget(path) {
+            if (path === currentTarget) return; // No change
+            
             currentTarget = path;
             targetInput.value = path;
+            
+            if (!isNavigatingHistory) {
+                // New navigation: clear forward history and push
+                historyStack = historyStack.slice(0, historyIndex + 1);
+                historyStack.push(path);
+                historyIndex++;
+                updateHistoryUI();
+            }
+            
             inspectTarget();
         }
 
@@ -204,8 +253,20 @@
             container.innerHTML = html;
 
             // Render Right Panel (Members)
+            renderInspectorContent(info);
+        }
+
+        const memberSearchInput = document.getElementById('member-search');
+        memberSearchInput.addEventListener('input', () => {
+             renderMemberList(currentMembers, memberSearchInput.value);
+        });
+
+        function renderInspectorContent(info) {
+            const inspector = document.getElementById('inspector-content');
+            inspector.innerHTML = '';
+
+            // Collection Items (Not filtered by regex for now, usually simple indices/keys)
             if (info.is_collection && info.collection_items) {
-                // Render collection items
                 inspector.innerHTML += `<div style="padding:5px; font-weight:bold; color:#444; border-bottom:1px solid #ccc">Collection Items</div>`;
                 info.collection_items.forEach(item => {
                      const el = document.createElement('div');
@@ -213,11 +274,8 @@
                      const keyDisplay = item.key !== undefined ? item.key : `[${item.index}]`;
                      el.innerHTML = `<span class="member-kind kind-collection">C</span> <span class="member-name">${keyDisplay}</span> <span class="member-type">${item.type}</span>`;
                      
-                     // Determine new path based on collection type
-                     // Note: Python dict access uses ['key'], list uses [index]
                      let accessor = "";
                      if (item.key !== undefined) {
-                         // backend returns repr(key) which includes quotes for strings
                          accessor = `[${item.key}]`; 
                      } else {
                          accessor = `[${item.index}]`;
@@ -228,17 +286,57 @@
                 });
             }
 
-            if (info.members) {
-                 inspector.innerHTML += `<div style="padding:5px; font-weight:bold; color:#444; border-bottom:1px solid #ccc; margin-top:10px;">Members</div>`;
-                 info.members.forEach(m => {
-                     const el = document.createElement('div');
-                     el.className = 'member-item';
-                     const kindLetter = m.kind.charAt(0).toUpperCase();
-                     el.innerHTML = `<span class="member-kind kind-${m.kind}">${kindLetter}</span> <span class="member-name">${m.name}</span> <span class="member-type">${m.type}</span>`;
-                     el.onclick = () => setTarget(currentTarget + "." + m.name);
-                     inspector.appendChild(el);
-                 });
+            // Members
+            currentMembers = info.members || [];
+            // Reset search on new object? Maybe keep it if user is exploring similar objects?
+            // Let's keep the search term if it exists
+            renderMemberList(currentMembers, memberSearchInput.value);
+        }
+
+        function renderMemberList(members, filterRegex) {
+            // We only update the members section. If collection items exist, they are already in inspector.innerHTML.
+            // This is a bit tricky if we want to preserve collection items while updating members.
+            // Better approach: Create a dedicated container for members.
+            
+            let memberContainer = document.getElementById('members-list-container');
+            if (!memberContainer) {
+                // Append title and container if not exists
+                const inspector = document.getElementById('inspector-content');
+                if (members.length > 0) {
+                    const title = document.createElement('div');
+                    title.style.cssText = "padding:5px; font-weight:bold; color:#444; border-bottom:1px solid #ccc; margin-top:10px;";
+                    title.textContent = "Members";
+                    inspector.appendChild(title);
+                    
+                    memberContainer = document.createElement('div');
+                    memberContainer.id = 'members-list-container';
+                    inspector.appendChild(memberContainer);
+                }
             }
+            
+            if (!memberContainer) return; // No members to render
+
+            memberContainer.innerHTML = '';
+            
+            let re = null;
+            if (filterRegex) {
+                try {
+                    re = new RegExp(filterRegex, 'i');
+                } catch (e) {
+                    // Invalid regex, maybe show error or just ignore
+                }
+            }
+
+            members.forEach(m => {
+                if (re && !re.test(m.name)) return;
+
+                const el = document.createElement('div');
+                el.className = 'member-item';
+                const kindLetter = m.kind.charAt(0).toUpperCase();
+                el.innerHTML = `<span class="member-kind kind-${m.kind}">${kindLetter}</span> <span class="member-name">${m.name}</span> <span class="member-type">${m.type}</span>`;
+                el.onclick = () => setTarget(currentTarget + "." + m.name);
+                memberContainer.appendChild(el);
+            });
         }
 
         // --- Console ---

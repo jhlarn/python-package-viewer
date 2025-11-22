@@ -6,7 +6,6 @@ from contextlib import redirect_stdout, redirect_stderr
 class Api:
     def __init__(self):
         self.globals = {}
-        self.locals = {}
         # Defer EDB loading to prevent CLR conflicts during startup
 
     def load_edb(self):
@@ -32,6 +31,8 @@ class Api:
         """Returns a list of global variable names and their types."""
         vars_info = []
         for name, obj in self.globals.items():
+            # Skip internal python vars if any (though we usually control self.globals)
+            if name.startswith("__"): continue
             vars_info.append({
                 "name": name,
                 "type": type(obj).__name__,
@@ -52,8 +53,9 @@ class Api:
                 # but for a console, usually exec is safer for general code blocks.
                 # To allow "return" values from single expressions, we can try eval first
                 # or just rely on printing.
-                # For this implementation, we'll stick to exec and update globals.
-                exec(code, self.globals, self.locals)
+                # To ensure variables defined in console are available globally (and thus in the UI tree),
+                # we use self.globals for both locals and globals.
+                exec(code, self.globals, self.globals)
             except Exception as e:
                 error_msg = str(e)
                 print(f"Error: {e}")
@@ -68,29 +70,38 @@ class Api:
         """
         try:
             # Evaluate the object path to get the actual object
-            obj = eval(obj_path, self.globals, self.locals)
+            # Use self.globals for both globals and locals
+            obj = eval(obj_path, self.globals, self.globals)
             
             obj_type = type(obj).__name__
             obj_doc = inspect.getdoc(obj) or "No documentation available."
             
             members = []
-            # Inspect members
-            for name, value in inspect.getmembers(obj):
+            # Use dir() then getattr() for more robust inspection of CLR/.NET objects
+            # inspect.getmembers() fails if any property raises an error
+            
+            for name in dir(obj):
                 if name.startswith("_"): continue # Skip private/magic methods
                 
-                kind = "property"
-                if inspect.isroutine(value):
-                    kind = "method"
-                elif inspect.isclass(value):
-                    kind = "class"
-                elif isinstance(value, (list, tuple, dict)):
-                    kind = "collection"
-                
-                members.append({
-                    "name": name,
-                    "kind": kind,
-                    "type": type(value).__name__
-                })
+                try:
+                    value = getattr(obj, name)
+                    
+                    kind = "property"
+                    if callable(value) or inspect.isroutine(value):
+                        kind = "method"
+                    elif inspect.isclass(value):
+                        kind = "class"
+                    elif isinstance(value, (list, tuple, dict)):
+                        kind = "collection"
+                    
+                    members.append({
+                        "name": name,
+                        "kind": kind,
+                        "type": type(value).__name__
+                    })
+                except Exception:
+                    # If retrieving the attribute fails (common with some properties), skip it
+                    pass
             
             # If it's a collection, we might want to send its items (or a subset)
             collection_items = None
@@ -116,7 +127,7 @@ class Api:
     def get_object_value(self, obj_path):
         """Returns the value of an object if it's simple."""
         try:
-            obj = eval(obj_path, self.globals, self.locals)
+            obj = eval(obj_path, self.globals, self.globals)
             return {"value": str(obj), "type": type(obj).__name__}
         except Exception as e:
             return {"error": str(e)}
