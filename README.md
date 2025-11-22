@@ -47,7 +47,7 @@ Once the installation is complete, you can launch the EDB Explorer GUI:
     -   A successful version will be saved in `config.json` for faster loading in the future.
 
 3.  **GUI Layout**:
-    -   **Left Panel**: Displays "Global Variables" (the loaded `edb` object and variables from the console) and a "Favorites" section. You can click "Ref" to refresh the global variables.
+    -   **Left Panel**: Displays "Global Variables" (the loaded `edb` object and variables from the console) and a "Favorites" section.
     -   **Center Panel**: Shows "Object Details" (type, value, and formatted docstring) for the currently selected object. The docstring panel will dynamically fill available space.
     -   **Right Panel**: Displays "Members / Inspector" (properties and methods) of the selected object. It includes a regex filter input to search through members.
     -   **Bottom Panel**: A "Python Console" for interactive code execution. Its visibility can be toggled.
