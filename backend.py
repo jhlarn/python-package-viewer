@@ -4,6 +4,7 @@ import io
 import json
 import os
 import webview
+from datetime import datetime
 from contextlib import redirect_stdout, redirect_stderr
 
 class Api:
@@ -56,7 +57,12 @@ class Api:
 
         # Define versions to try
         # Default priority: Saved -> 2024.1 -> others
-        default_versions = ["2024.1", "2024.2", "2025.1", "2025.2"]
+        current_year = datetime.now().year
+        default_versions = []
+        for year in range(2024, current_year + 1):
+            default_versions.append(f"{year}.1")
+            default_versions.append(f"{year}.2")
+
         versions_to_try = []
         
         if saved_version:
