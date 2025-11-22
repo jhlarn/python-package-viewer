@@ -47,11 +47,17 @@
         #member-search { width: 100%; box-sizing: border-box; padding: 4px; margin-top: 5px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; }
 
         /* Center Content Info */
-        #object-info-container { padding: 20px; user-select: text; -webkit-user-select: text; }
-        h2.obj-title { margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 18px; user-select: text; -webkit-user-select: text; }
-        .docstring { white-space: pre-wrap; font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; background-color: #fdfdfd; border: 1px solid #eee; padding: 10px; color: #444; max-height: 300px; overflow-y: auto; user-select: text; -webkit-user-select: text; cursor: text; }
-        body.console-hidden .docstring { max-height: calc(100vh - 150px); }
-        .inspector-value { font-family: monospace; background: #eee; padding: 5px; border-radius: 3px; word-break: break-all; white-space: pre-wrap; user-select: text; -webkit-user-select: text; cursor: text; }
+        #object-info-container { padding: 20px; user-select: text; -webkit-user-select: text; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
+        h2.obj-title { margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 18px; user-select: text; -webkit-user-select: text; flex-shrink: 0; }
+        
+        .inspector-section { margin-bottom: 15px; flex-shrink: 0; display: flex; flex-direction: column; }
+        .inspector-section.doc-section { flex-grow: 1; min-height: 0; display: flex; flex-direction: column; margin-bottom: 0;}
+        
+        .inspector-label { font-weight: bold; margin-bottom: 5px; font-size: 12px; color: #444; flex-shrink: 0; }
+        .inspector-value { font-family: monospace; background: #eee; padding: 5px; border-radius: 3px; word-break: break-all; white-space: pre-wrap; user-select: text; -webkit-user-select: text; cursor: text; flex-shrink: 0; }
+        
+        .docstring { white-space: pre-wrap; font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; background-color: #fdfdfd; border: 1px solid #eee; padding: 10px; color: #444; overflow-y: auto; user-select: text; -webkit-user-select: text; cursor: text; flex-grow: 1; }
+        /* body.console-hidden .docstring { max-height: calc(100vh - 150px); }  <-- Removed, handled by flexbox now */
 
         /* Bottom Console */
         #bottom-panel { height: 200px; background-color: #2d3436; color: #dfe6e9; display: flex; flex-direction: column; border-top: 1px solid #ccc; flex-shrink: 0; }
@@ -102,6 +108,8 @@
                  <div id="favorites-tree" class="panel-body"></div>
             </div>
         </div>
+        
+        <div id="main-h-resizer-1" style="width: 5px; background: #ccc; cursor: ew-resize; flex-shrink: 0;"></div>
 
         <!-- Center Panel: Object Details / Doc / Value -->
         <div id="center-content">
@@ -110,6 +118,8 @@
                  <div style="color: #888; text-align: center; margin-top: 50px;">Select an object from the left panel or enter a target above.</div>
              </div>
         </div>
+        
+        <div id="main-h-resizer-2" style="width: 5px; background: #ccc; cursor: ew-resize; flex-shrink: 0;"></div>
 
         <!-- Right Panel: Members / Inspector -->
         <div id="right-panel" class="panel">
@@ -120,6 +130,8 @@
             <div id="inspector-content" class="panel-body"></div>
         </div>
     </div>
+
+    <div id="bottom-panel-resizer" style="height: 5px; background: #ccc; cursor: ns-resize; flex-shrink: 0;"></div>
 
     <!-- Bottom Panel: Console -->
     <div id="bottom-panel">
@@ -219,52 +231,108 @@
         }
 
         // --- Resizer Logic ---
-        const resizer = document.getElementById('left-panel-resizer');
-        const favoritesPanel = document.getElementById('favorites-panel');
-        const leftPanel = document.getElementById('left-panel');
-        
-        // Load saved height
-        const savedFavHeight = localStorage.getItem('edb_explorer_fav_height');
-        if (savedFavHeight) {
-            favoritesPanel.style.height = savedFavHeight;
+        // Helper for generic resizing
+        function setupResizer(resizerId, targetId, direction, configKey, minSize = 50, invert = false) {
+             const resizer = document.getElementById(resizerId);
+             const target = document.getElementById(targetId);
+             if (!resizer || !target) return;
+             
+             let isResizing = false;
+             
+             resizer.addEventListener('mousedown', (e) => {
+                 isResizing = true;
+                 document.body.style.cursor = direction === 'h' ? 'ew-resize' : 'ns-resize';
+                 e.preventDefault();
+             });
+             
+             document.addEventListener('mousemove', (e) => {
+                 if (!isResizing) return;
+                 
+                 if (direction === 'h') {
+                     // Horizontal resizing (width)
+                     let newWidth;
+                     if (invert) {
+                         // Resizing right panel (from right edge)
+                         // We need to calculate width based on window width - mouse X
+                         newWidth = document.body.clientWidth - e.clientX;
+                     } else {
+                         // Resizing left panel
+                         newWidth = e.clientX;
+                     }
+                     if (newWidth < minSize) newWidth = minSize;
+                     target.style.width = `${newWidth}px`;
+                 } else {
+                     // Vertical resizing (height)
+                     let newHeight;
+                     if (invert) {
+                          // Resizing bottom panel (from bottom)
+                          // Height = Window Height - Mouse Y
+                          newHeight = document.body.clientHeight - e.clientY;
+                     } else {
+                          newHeight = e.clientY - target.getBoundingClientRect().top; 
+                     }
+                     if (newHeight < minSize) newHeight = minSize;
+                     target.style.height = `${newHeight}px`;
+                 }
+             });
+             
+             document.addEventListener('mouseup', () => {
+                 if (isResizing) {
+                     isResizing = false;
+                     document.body.style.cursor = 'default';
+                     // Save config
+                     const update = {};
+                     update[configKey] = direction === 'h' ? target.style.width : target.style.height;
+                     callApi('update_app_config', update);
+                 }
+             });
         }
 
-        let isResizing = false;
+        // 1. Favorites Split (Existing, Vertical internal to Left Panel) - Handled separately above or refactor?
+        // Let's refactor existing favorites resizer to use similar pattern or keep as is.
+        // The existing one is a bit specific because it's inside a flex column.
+        // Let's keep the existing favorites resizer logic as is for now, it works.
+        
+        // 2. Left Panel Width
+        setupResizer('main-h-resizer-1', 'left-panel', 'h', 'left_panel_width');
+        
+        // 3. Right Panel Width (Inverted logic because it's on the left of the panel but panel is right aligned? 
+        // Actually, flex layout: Left | Resizer | Center | Resizer | Right.
+        // Resizing 'main-h-resizer-2' changes Right Panel width? Or Center?
+        // Usually easier to set fixed width for Left and Right, and Center is flex-grow: 1.
+        // So 'main-h-resizer-2' should adjust Right Panel width.
+        setupResizer('main-h-resizer-2', 'right-panel', 'h', 'right_panel_width', 100, true);
 
-        resizer.addEventListener('mousedown', (e) => {
-            isResizing = true;
+        // 4. Bottom Console Height
+        setupResizer('bottom-panel-resizer', 'bottom-panel', 'v', 'bottom_panel_height', 50, true);
+
+
+        // Existing Favorites Resizer (Keep specifically as it handles internal flex height)
+        const favResizer = document.getElementById('left-panel-resizer');
+        const favoritesPanel = document.getElementById('favorites-panel');
+        const leftPanel = document.getElementById('left-panel');
+        let isFavResizing = false;
+
+        favResizer.addEventListener('mousedown', (e) => {
+            isFavResizing = true;
             document.body.style.cursor = 'ns-resize';
-            e.preventDefault(); // Prevent text selection
+            e.preventDefault(); 
         });
 
         document.addEventListener('mousemove', (e) => {
-            if (!isResizing) return;
-            
+            if (!isFavResizing) return;
             const leftPanelRect = leftPanel.getBoundingClientRect();
-            // Calculate new height for favorites panel (from bottom)
-            // y position relative to left panel top
-            const relativeY = e.clientY - leftPanelRect.top;
-            
-            // We want height of favorites = total height - relativeY
-            // But simpler: the favorites panel is at the bottom.
-            // Let's calculate percentage or pixels.
-            // Favorites height = leftPanel.bottom - e.clientY
-            
             let newHeight = leftPanelRect.bottom - e.clientY;
-            
-            // Constraints
             if (newHeight < 50) newHeight = 50;
             if (newHeight > leftPanelRect.height - 50) newHeight = leftPanelRect.height - 50;
-            
             favoritesPanel.style.height = `${newHeight}px`;
         });
 
         document.addEventListener('mouseup', () => {
-            if (isResizing) {
-                isResizing = false;
+            if (isFavResizing) {
+                isFavResizing = false;
                 document.body.style.cursor = 'default';
-                // Save preference
-                localStorage.setItem('edb_explorer_fav_height', favoritesPanel.style.height);
+                callApi('update_app_config', { fav_panel_height: favoritesPanel.style.height });
             }
         });
 
@@ -301,6 +369,13 @@
             if (config && config.fav_panel_height) {
                  const favoritesPanel = document.getElementById('favorites-panel');
                  favoritesPanel.style.height = config.fav_panel_height;
+            }
+            
+            // Load other panel dimensions
+            if (config) {
+                if (config.left_panel_width) document.getElementById('left-panel').style.width = config.left_panel_width;
+                if (config.right_panel_width) document.getElementById('right-panel').style.width = config.right_panel_width;
+                if (config.bottom_panel_height) document.getElementById('bottom-panel').style.height = config.bottom_panel_height;
             }
             
             renderFavorites();
@@ -462,7 +537,7 @@
             }
 
             if (info.doc) {
-                html += `<div class="inspector-section"><div class="inspector-label">Docstring:</div><div class="docstring">${formatDocstring(info.doc)}</div></div>`;
+                html += `<div class="inspector-section doc-section"><div class="inspector-label">Docstring:</div><div class="docstring">${formatDocstring(info.doc)}</div></div>`;
             }
 
             container.innerHTML = html;
