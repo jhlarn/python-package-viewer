@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EDB Explorer</title>
+    <style>
+        body { margin: 0; overflow: hidden; display: flex; flex-direction: column; height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fcfcfc; color: #333; }
+        
+        /* Top Bar */
+        #top-bar { padding: 10px; background-color: #e1e1e1; border-bottom: 1px solid #bbb; display: flex; align-items: center; gap: 10px; }
+        #target-input { flex-grow: 1; padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 14px; }
+        button { padding: 6px 12px; cursor: pointer; background-color: #fff; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; transition: background-color 0.1s; }
+        button:hover { background-color: #f0f0f0; }
+        button:active { background-color: #e0e0e0; }
+
+        /* Main Layout */
+        #main-content { display: flex; flex-grow: 1; overflow: hidden; }
+        
+        .panel { display: flex; flex-direction: column; overflow: hidden; }
+        #left-panel { width: 250px; min-width: 200px; border-right: 1px solid #ccc; background-color: #f8f9fa; }
+        #right-panel { width: 350px; min-width: 250px; border-left: 1px solid #ccc; background-color: #f8f9fa; }
+        #center-content { flex-grow: 1; overflow-y: auto; background-color: #fff; padding: 0; display: flex; flex-direction: column;}
+
+        .panel-header { padding: 8px 10px; background-color: #e9ecef; font-weight: 600; font-size: 12px; text-transform: uppercase; color: #555; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        
+        .panel-body { overflow-y: auto; flex-grow: 1; padding: 5px; }
+
+        /* Tree/List Styles */
+        .tree-item { padding: 4px 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; border-radius: 3px; font-size: 13px; }
+        .tree-item:hover { background-color: #e2e6ea; }
+        .tree-item .name { font-weight: 500; color: #0056b3; }
+        .tree-item .type { font-size: 0.9em; color: #666; font-style: italic; margin-left: auto; }
+        
+        /* Inspector Styles */
+        .inspector-section { margin-bottom: 15px; }
+        .inspector-label { font-weight: bold; margin-bottom: 5px; font-size: 12px; color: #444; }
+        .inspector-value { font-family: monospace; background: #eee; padding: 5px; border-radius: 3px; word-break: break-all; white-space: pre-wrap; }
+        .member-item { padding: 3px 5px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f0f0; display: flex; }
+        .member-item:hover { background-color: #e9ecef; }
+        .member-name { color: #2c3e50; flex-grow: 1; }
+        .member-type { color: #7f8c8d; font-size: 0.85em; }
+        .member-kind { margin-right: 8px; font-size: 0.8em; padding: 1px 4px; border-radius: 3px; color: #fff; width: 16px; text-align: center; display: inline-block;}
+        .kind-method { background-color: #a29bfe; }
+        .kind-property { background-color: #74b9ff; }
+        .kind-class { background-color: #ffeaa7; color: #555; }
+        .kind-collection { background-color: #55efc4; color: #555; }
+
+        /* Center Content Info */
+        #object-info-container { padding: 20px; }
+        h2.obj-title { margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 18px; }
+        .docstring { white-space: pre-wrap; font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; background-color: #fdfdfd; border: 1px solid #eee; padding: 10px; color: #444; max-height: 300px; overflow-y: auto; }
+
+        /* Bottom Console */
+        #bottom-panel { height: 200px; background-color: #2d3436; color: #dfe6e9; display: flex; flex-direction: column; border-top: 1px solid #ccc; }
+        #bottom-panel .panel-header { background-color: #353b48; color: #dfe6e9; border-bottom: 1px solid #636e72; }
+        #console-output-container { flex-grow: 1; overflow-y: auto; padding: 10px; font-family: monospace; font-size: 13px; }
+        .console-entry { margin-bottom: 5px; border-bottom: 1px solid #444; padding-bottom: 5px; }
+        .console-input-line { color: #00cec9; }
+        .console-result { color: #dfe6e9; white-space: pre-wrap; }
+        .console-error { color: #ff7675; white-space: pre-wrap; }
+        
+        #console-input-wrapper { display: flex; border-top: 1px solid #636e72; background-color: #2d3436; padding: 5px; }
+        #python-console-input { flex-grow: 1; background: transparent; border: none; color: #fff; font-family: monospace; font-size: 13px; resize: none; outline: none; }
+        #execute-code { background-color: #0984e3; color: white; border: none; }
+        #execute-code:hover { background-color: #0c7cd5; }
+
+    </style>
+</head>
+<body>
+    <div id="top-bar">
+        <span style="font-weight: bold;">Target:</span>
+        <input type="text" id="target-input" placeholder="Select an object...">
+        <button id="refresh-objs">Refresh All</button>
+    </div>
+    
+    <div id="main-content">
+        <!-- Left Panel: Global Variables -->
+        <div id="left-panel" class="panel">
+            <div class="panel-header">
+                <span>Global Variables</span>
+                <button id="btn-refresh-vars" style="padding: 2px 6px; font-size: 10px;">Ref</button>
+            </div>
+            <div id="global-vars-tree" class="panel-body"></div>
+        </div>
+
+        <!-- Center Panel: Object Details / Doc / Value -->
+        <div id="center-content">
+             <div class="panel-header">Object Details</div>
+             <div id="object-info-container" class="panel-body">
+                 <div style="color: #888; text-align: center; margin-top: 50px;">Select an object from the left panel or enter a target above.</div>
+             </div>
+        </div>
+
+        <!-- Right Panel: Members / Inspector -->
+        <div id="right-panel" class="panel">
+            <div class="panel-header">Members / Inspector</div>
+            <div id="inspector-content" class="panel-body"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Panel: Console -->
+    <div id="bottom-panel">
+        <div class="panel-header">Python Console</div>
+        <div id="console-output-container"></div>
+        <div id="console-input-wrapper">
+            <span style="color: #00cec9; margin-right: 5px;">>>></span>
+            <textarea id="python-console-input" rows="1" placeholder="Type code here... (Shift+Enter for new line, Enter to run)"></textarea>
+            <button id="execute-code">Run</button>
+        </div>
+    </div>
+
+    <script>
+        let currentTarget = "";
+
+        window.addEventListener('pywebviewready', async function() {
+            console.log("PyWebview Ready");
+            
+            // Trigger EDB load
+            const container = document.getElementById('object-info-container');
+            container.innerHTML = '<div style="color:#888; text-align:center; margin-top:50px;">Loading EDB... Please wait.</div>';
+            
+            const res = await callApi('load_edb');
+            console.log("EDB Load Result:", res);
+            
+            if (res && res.status === 'error') {
+                 container.innerHTML = `<div style="color: red; text-align:center; margin-top:50px;">Failed to load EDB: ${res.message}</div>`;
+            } else {
+                 container.innerHTML = '<div style="color: #888; text-align: center; margin-top: 50px;">Select an object from the left panel or enter a target above.</div>';
+            }
+
+            loadGlobalVars();
+        });
+
+        // --- API Helpers ---
+        async function callApi(method, ...args) {
+            if (window.pywebview && window.pywebview.api && window.pywebview.api[method]) {
+                return await window.pywebview.api[method](...args);
+            } else {
+                console.error(`API method ${method} not found.`);
+                return null;
+            }
+        }
+
+        // --- Global Vars ---
+        async function loadGlobalVars() {
+            const vars = await callApi('get_global_vars');
+            const container = document.getElementById('global-vars-tree');
+            container.innerHTML = '';
+            
+            if (vars) {
+                vars.forEach(v => {
+                    const el = document.createElement('div');
+                    el.className = 'tree-item';
+                    el.innerHTML = `<span class="name">${v.name}</span><span class="type">${v.type}</span>`;
+                    el.onclick = () => setTarget(v.name);
+                    container.appendChild(el);
+                });
+            }
+        }
+
+        document.getElementById('refresh-objs').onclick = () => { loadGlobalVars(); inspectTarget(); };
+        document.getElementById('btn-refresh-vars').onclick = loadGlobalVars;
+
+        // --- Target & Inspection ---
+        const targetInput = document.getElementById('target-input');
+        targetInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                setTarget(targetInput.value);
+            }
+        });
+
+        function setTarget(path) {
+            currentTarget = path;
+            targetInput.value = path;
+            inspectTarget();
+        }
+
+        async function inspectTarget() {
+            if (!currentTarget) return;
+            
+            const container = document.getElementById('object-info-container');
+            const inspector = document.getElementById('inspector-content');
+            
+            container.innerHTML = '<div style="color:#888">Loading...</div>';
+            inspector.innerHTML = ''; // Clear previous
+
+            const info = await callApi('get_object_info', currentTarget);
+            
+            if (info.error) {
+                container.innerHTML = `<div style="color: red">Error: ${info.error}</div>`;
+                return;
+            }
+
+            // Render Center Panel (Details)
+            let html = `<h2 class="obj-title">${info.name} <span style="font-size:0.6em; color: #666; font-weight:normal">(${info.type})</span></h2>`;
+            
+            if (info.value !== null && info.value !== undefined) {
+                 html += `<div class="inspector-section"><div class="inspector-label">Value:</div><div class="inspector-value">${info.value}</div></div>`;
+            }
+
+            if (info.doc) {
+                html += `<div class="inspector-section"><div class="inspector-label">Docstring:</div><div class="docstring">${formatDocstring(info.doc)}</div></div>`;
+            }
+
+            container.innerHTML = html;
+
+            // Render Right Panel (Members)
+            if (info.is_collection && info.collection_items) {
+                // Render collection items
+                inspector.innerHTML += `<div style="padding:5px; font-weight:bold; color:#444; border-bottom:1px solid #ccc">Collection Items</div>`;
+                info.collection_items.forEach(item => {
+                     const el = document.createElement('div');
+                     el.className = 'member-item';
+                     const keyDisplay = item.key !== undefined ? item.key : `[${item.index}]`;
+                     el.innerHTML = `<span class="member-kind kind-collection">C</span> <span class="member-name">${keyDisplay}</span> <span class="member-type">${item.type}</span>`;
+                     
+                     // Determine new path based on collection type
+                     // Note: Python dict access uses ['key'], list uses [index]
+                     let accessor = "";
+                     if (item.key !== undefined) {
+                         // backend returns repr(key) which includes quotes for strings
+                         accessor = `[${item.key}]`; 
+                     } else {
+                         accessor = `[${item.index}]`;
+                     }
+                     
+                     el.onclick = () => setTarget(currentTarget + accessor);
+                     inspector.appendChild(el);
+                });
+            }
+
+            if (info.members) {
+                 inspector.innerHTML += `<div style="padding:5px; font-weight:bold; color:#444; border-bottom:1px solid #ccc; margin-top:10px;">Members</div>`;
+                 info.members.forEach(m => {
+                     const el = document.createElement('div');
+                     el.className = 'member-item';
+                     const kindLetter = m.kind.charAt(0).toUpperCase();
+                     el.innerHTML = `<span class="member-kind kind-${m.kind}">${kindLetter}</span> <span class="member-name">${m.name}</span> <span class="member-type">${m.type}</span>`;
+                     el.onclick = () => setTarget(currentTarget + "." + m.name);
+                     inspector.appendChild(el);
+                 });
+            }
+        }
+
+        // --- Console ---
+        const consoleInput = document.getElementById('python-console-input');
+        const consoleOutput = document.getElementById('console-output-container');
+
+        consoleInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                runConsole();
+            }
+        });
+
+        document.getElementById('execute-code').onclick = runConsole;
+
+        async function runConsole() {
+            const code = consoleInput.value.trim();
+            if (!code) return;
+
+            // Echo input
+            const entry = document.createElement('div');
+            entry.className = 'console-entry';
+            entry.innerHTML = `<div class="console-input-line">>>> ${code}</div>`;
+            consoleOutput.appendChild(entry);
+
+            // Execute
+            const res = await callApi('evaluate', code);
+            
+            if (res.output) {
+                const outDiv = document.createElement('div');
+                outDiv.className = 'console-result';
+                outDiv.textContent = res.output;
+                entry.appendChild(outDiv);
+            }
+            if (res.error) {
+                const errDiv = document.createElement('div');
+                errDiv.className = 'console-error';
+                errDiv.textContent = res.error;
+                entry.appendChild(errDiv);
+            }
+            
+            consoleInput.value = '';
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            
+            // Refresh globals as code might have changed them
+            loadGlobalVars();
+        }
+
+        function formatDocstring(doc) {
+            if (!doc) return "";
+            // Escape HTML first
+            let safe = doc.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            // Highlight headers (e.g., Parameters:, Returns:, or Parameters\n----------)
+            // Common headers in Python docstrings
+            const headers = ["Parameters", "Returns", "Raises", "Yields", "Examples", "Notes", "See Also", "Attributes", "Args", "Kwargs"];
+            
+            // Regex for "Header\n-------"
+            headers.forEach(h => {
+                const reUnderline = new RegExp(`^(\\s*)(${h})\\n\\s*-+`, 'gm');
+                safe = safe.replace(reUnderline, '$1<strong style="color:#2c3e50; font-size:1.1em;">$2</strong>');
+                
+                const reColon = new RegExp(`^(\\s*)(${h}):`, 'gm');
+                safe = safe.replace(reColon, '$1<strong style="color:#2c3e50; font-size:1.1em;">$2:</strong>');
+            });
+
+            // Highlight parameter names (heuristic: "param_name :" or "param_name (type):")
+            // This is tricky to get right without false positives, keeping it simple for now.
+            // safe = safe.replace(/^(\s+)(\w+)(\s*:\s*)/gm, '$1<span style="color:#e67e22; font-weight:bold;">$2</span>$3');
+
+            return safe;
+        }
+        
+    </script>
+</body>
+</html>
