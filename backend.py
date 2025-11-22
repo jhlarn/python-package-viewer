@@ -1,31 +1,105 @@
 import inspect
 import sys
 import io
+import json
+import os
+import webview
 from contextlib import redirect_stdout, redirect_stderr
 
 class Api:
     def __init__(self):
         self.globals = {}
+        self.current_edb_path = "pcb.aedb"
+        self.window = None
         # Defer EDB loading to prevent CLR conflicts during startup
 
-    def load_edb(self):
-        print("Loading EDB...")
+    def set_window(self, window):
+        self.window = window
+
+    def pick_edb_folder(self):
+        if not self.window:
+            return {"status": "error", "message": "Window not attached."}
+        
+        # Open folder dialog
+        result = self.window.create_file_dialog(webview.FOLDER_DIALOG)
+        if result and len(result) > 0:
+            new_path = result[0]
+            return self.load_edb(new_path)
+        return {"status": "cancelled", "message": "No folder selected."}
+
+    def load_edb(self, path=None):
+        if path:
+            self.current_edb_path = path
+            
+        print(f"Loading EDB from {self.current_edb_path}...")
+
+        # Close existing EDB if open
+        if hasattr(self, 'edb') and self.edb:
+            print("Closing existing EDB...")
+            try:
+                self.edb.close_edb()
+                print("Existing EDB closed successfully.")
+            except Exception as e:
+                print(f"Error closing existing EDB: {e}")
+            self.edb = None # Clear reference
+
+        # Config setup
+        config_path = "config.json"
+        saved_version = None
+        if os.path.exists(config_path):
+            try:
+                with open(config_path, 'r') as f:
+                    config = json.load(f)
+                    saved_version = config.get("aedt_version")
+            except Exception as e:
+                print(f"Error reading config: {e}")
+
+        # Define versions to try
+        # Default priority: Saved -> 2024.1 -> others
+        default_versions = ["2024.1", "2024.2", "2025.1", "2025.2"]
+        versions_to_try = []
+        
+        if saved_version:
+            versions_to_try.append(saved_version)
+            
+        for v in default_versions:
+            if v != saved_version:
+                versions_to_try.append(v)
+
         try:
             from pyedb import Edb
-            # Using the version specified in README, but defaulting to generic if needed
-            # Assuming pcb.aedb is in the current working directory
-            self.edb = Edb("pcb.aedb", version='2024.1')
-            self.globals['edb'] = self.edb
-            print("EDB loaded successfully.")
-            return {"status": "success", "message": "EDB loaded."}
         except ImportError:
             print("pyedb not installed or failed to import.")
             self.globals['edb'] = "pyedb not installed"
             return {"status": "error", "message": "pyedb not installed"}
-        except Exception as e:
-            print(f"Failed to load EDB: {e}")
-            self.globals['edb'] = f"Error loading EDB: {str(e)}"
-            return {"status": "error", "message": str(e)}
+
+        last_error = None
+        
+        for v in versions_to_try:
+            print(f"Trying to open EDB with AEDT version {v}...")
+            try:
+                self.edb = Edb(self.current_edb_path, version=v)
+                self.globals['edb'] = self.edb
+                print(f"EDB loaded successfully with version {v}.")
+                
+                # Save successful version
+                try:
+                    with open(config_path, 'w') as f:
+                        json.dump({"aedt_version": v}, f)
+                except Exception as e:
+                    print(f"Failed to save config: {e}")
+
+                return {"status": "success", "message": f"EDB loaded (v{v}) from {os.path.basename(self.current_edb_path)}."}
+            except Exception as e:
+                print(f"Failed to load with version {v}: {e}")
+                last_error = e
+                # Continue to next version
+
+        # If loop finishes, all failed
+        error_msg = f"Failed to load EDB with any version. Last error: {last_error}"
+        print(error_msg)
+        self.globals['edb'] = error_msg
+        return {"status": "error", "message": error_msg}
 
     def get_global_vars(self):
         """Returns a list of global variable names and their types."""

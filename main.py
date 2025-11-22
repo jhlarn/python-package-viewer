@@ -3,7 +3,8 @@ from backend import Api
 
 def main():
     api = Api()
-    webview.create_window("EDB Explorer", "index.html", width=1200, height=800, js_api=api)
+    window = webview.create_window("EDB Explorer", "index.html", width=1200, height=800, js_api=api)
+    api.set_window(window)
     webview.start()
 
 

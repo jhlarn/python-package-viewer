@@ -70,10 +70,13 @@
 </head>
 <body>
     <div id="top-bar">
-        <button id="btn-undo" disabled title="Go Back">Undo</button>
-        <button id="btn-redo" disabled title="Go Forward">Redo</button>
+        <button id="btn-load" title="Open EDB Folder">Import</button>
+        <button id="btn-reload" title="Reload Current EDB">Reload</button>
+        <div style="width: 1px; height: 20px; background: #ccc; margin: 0 5px;"></div>
         <span style="font-weight: bold; margin-left: 10px;">Target:</span>
         <input type="text" id="target-input" placeholder="Select an object...">
+        <button id="btn-undo" disabled title="Go Back">Undo</button>
+        <button id="btn-redo" disabled title="Go Forward">Redo</button>
     </div>
     
     <div id="main-content">
@@ -123,20 +126,51 @@
             console.log("PyWebview Ready");
             
             // Trigger EDB load
-            const container = document.getElementById('object-info-container');
-            container.innerHTML = '<div style="color:#888; text-align:center; margin-top:50px;">Loading EDB... Please wait.</div>';
+            showLoading("Loading default EDB...");
             
             const res = await callApi('load_edb');
+            handleLoadResponse(res);
+        });
+
+        function showLoading(msg) {
+            const container = document.getElementById('object-info-container');
+            container.innerHTML = `<div style="color:#888; text-align:center; margin-top:50px;">${msg || "Loading..."} Please wait.</div>`;
+        }
+
+        function handleLoadResponse(res) {
+            const container = document.getElementById('object-info-container');
             console.log("EDB Load Result:", res);
             
             if (res && res.status === 'error') {
                  container.innerHTML = `<div style="color: red; text-align:center; margin-top:50px;">Failed to load EDB: ${res.message}</div>`;
+            } else if (res && res.status === 'cancelled') {
+                 container.innerHTML = '<div style="color: #888; text-align: center; margin-top: 50px;">Load cancelled.</div>';
             } else {
-                 container.innerHTML = '<div style="color: #888; text-align: center; margin-top: 50px;">Select an object from the left panel or enter a target above.</div>';
+                 const msg = res && res.message ? res.message : "EDB Loaded.";
+                 container.innerHTML = `<div style="color: green; text-align: center; margin-top: 50px;">${msg}<br><br>Select an object from the left panel or enter a target above.</div>`;
             }
 
             loadGlobalVars();
-        });
+        }
+
+        document.getElementById('btn-reload').onclick = async () => {
+            showLoading("Reloading EDB...");
+            const res = await callApi('load_edb');
+            handleLoadResponse(res);
+        };
+
+        document.getElementById('btn-load').onclick = async () => {
+            // We don't show loading immediately because dialog blocks, but good to indicate intent
+            // However, pywebview dialog might block the UI update if not careful, but usually fine.
+            const res = await callApi('pick_edb_folder');
+            if (res.status === 'cancelled') {
+                // Do nothing or show status?
+                console.log("Pick cancelled");
+            } else {
+                showLoading("Loading selected EDB...");
+                handleLoadResponse(res);
+            }
+        };
 
         // --- API Helpers ---
         async function callApi(method, ...args) {
