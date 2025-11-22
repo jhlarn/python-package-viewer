@@ -12,10 +12,38 @@ class Api:
         self.globals = {}
         self.current_edb_path = "pcb.aedb"
         self.window = None
+        self.config_path = "config.json"
         # Defer EDB loading to prevent CLR conflicts during startup
 
     def set_window(self, window):
         self.window = window
+        
+    def _load_config(self):
+        if os.path.exists(self.config_path):
+            try:
+                with open(self.config_path, 'r') as f:
+                    return json.load(f)
+            except Exception as e:
+                print(f"Error reading config: {e}")
+        return {}
+
+    def _save_config_file(self, config_data):
+        try:
+            with open(self.config_path, 'w') as f:
+                json.dump(config_data, f, indent=4)
+        except Exception as e:
+            print(f"Failed to save config: {e}")
+
+    def get_app_config(self):
+        """Returns the current configuration."""
+        return self._load_config()
+
+    def update_app_config(self, updates):
+        """Updates the configuration with the provided dictionary."""
+        config = self._load_config()
+        config.update(updates)
+        self._save_config_file(config)
+        return config
 
     def pick_edb_folder(self):
         if not self.window:
@@ -45,15 +73,8 @@ class Api:
             self.edb = None # Clear reference
 
         # Config setup
-        config_path = "config.json"
-        saved_version = None
-        if os.path.exists(config_path):
-            try:
-                with open(config_path, 'r') as f:
-                    config = json.load(f)
-                    saved_version = config.get("aedt_version")
-            except Exception as e:
-                print(f"Error reading config: {e}")
+        config = self._load_config()
+        saved_version = config.get("aedt_version")
 
         # Define versions to try
         # Default priority: Saved -> 2024.1 -> others
@@ -89,11 +110,7 @@ class Api:
                 print(f"EDB loaded successfully with version {v}.")
                 
                 # Save successful version
-                try:
-                    with open(config_path, 'w') as f:
-                        json.dump({"aedt_version": v}, f)
-                except Exception as e:
-                    print(f"Failed to save config: {e}")
+                self.update_app_config({"aedt_version": v})
 
                 return {"status": "success", "message": f"EDB loaded (v{v}) from {os.path.basename(self.current_edb_path)}."}
             except Exception as e:

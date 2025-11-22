@@ -1,1 +1,6 @@
-{"aedt_version": "2024.1"}
+{
+    "aedt_version": "2024.1",
+    "favorites": [
+        "edb.hfss.create_differential_wave_port"
+    ]
+}

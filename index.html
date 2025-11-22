@@ -77,6 +77,7 @@
         <div style="width: 1px; height: 20px; background: #ccc; margin: 0 5px;"></div>
         <span style="font-weight: bold; margin-left: 10px;">Target:</span>
         <input type="text" id="target-input" placeholder="Select an object...">
+        <button id="btn-add-fav" title="Add current target to favorites" style="margin-left: 5px;">&#9733;</button>
         <button id="btn-undo" disabled title="Go Back">Undo</button>
         <button id="btn-redo" disabled title="Go Forward">Redo</button>
     </div>
@@ -84,11 +85,22 @@
     <div id="main-content">
         <!-- Left Panel: Global Variables -->
         <div id="left-panel" class="panel">
-            <div class="panel-header">
-                <span>Global Variables</span>
-                <button id="btn-refresh-vars" style="padding: 2px 6px; font-size: 10px;">Ref</button>
+            <div id="global-vars-panel" style="flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 50px;">
+                <div class="panel-header">
+                    <span>Global Variables</span>
+                    <button id="btn-refresh-vars" style="padding: 2px 6px; font-size: 10px;">Ref</button>
+                </div>
+                <div id="global-vars-tree" class="panel-body"></div>
             </div>
-            <div id="global-vars-tree" class="panel-body"></div>
+            
+            <div id="left-panel-resizer" style="height: 5px; background: #ccc; cursor: ns-resize; flex-shrink: 0;"></div>
+
+            <div id="favorites-panel" style="height: 30%; min-height: 50px; display: flex; flex-direction: column; overflow: hidden; background-color: #fff8e1;">
+                 <div class="panel-header" style="background-color: #fff3cd; color: #856404;">
+                    <span>Favorites</span>
+                 </div>
+                 <div id="favorites-tree" class="panel-body"></div>
+            </div>
         </div>
 
         <!-- Center Panel: Object Details / Doc / Value -->
@@ -153,6 +165,7 @@
             }
 
             loadGlobalVars();
+            loadFavorites();
         }
 
         document.getElementById('btn-reload').onclick = async () => {
@@ -205,6 +218,57 @@
             }
         }
 
+        // --- Resizer Logic ---
+        const resizer = document.getElementById('left-panel-resizer');
+        const favoritesPanel = document.getElementById('favorites-panel');
+        const leftPanel = document.getElementById('left-panel');
+        
+        // Load saved height
+        const savedFavHeight = localStorage.getItem('edb_explorer_fav_height');
+        if (savedFavHeight) {
+            favoritesPanel.style.height = savedFavHeight;
+        }
+
+        let isResizing = false;
+
+        resizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'ns-resize';
+            e.preventDefault(); // Prevent text selection
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            
+            const leftPanelRect = leftPanel.getBoundingClientRect();
+            // Calculate new height for favorites panel (from bottom)
+            // y position relative to left panel top
+            const relativeY = e.clientY - leftPanelRect.top;
+            
+            // We want height of favorites = total height - relativeY
+            // But simpler: the favorites panel is at the bottom.
+            // Let's calculate percentage or pixels.
+            // Favorites height = leftPanel.bottom - e.clientY
+            
+            let newHeight = leftPanelRect.bottom - e.clientY;
+            
+            // Constraints
+            if (newHeight < 50) newHeight = 50;
+            if (newHeight > leftPanelRect.height - 50) newHeight = leftPanelRect.height - 50;
+            
+            favoritesPanel.style.height = `${newHeight}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = 'default';
+                // Save preference
+                localStorage.setItem('edb_explorer_fav_height', favoritesPanel.style.height);
+            }
+        });
+
+
         // --- Global Vars ---
         async function loadGlobalVars() {
             const vars = await callApi('get_global_vars');
@@ -221,6 +285,95 @@
                 });
             }
         }
+
+        // --- Favorites ---
+        let favorites = [];
+
+        async function loadFavorites() {
+            const config = await callApi('get_app_config');
+            if (config && config.favorites) {
+                favorites = config.favorites;
+            } else {
+                favorites = [];
+            }
+            
+            // Load saved height from config
+            if (config && config.fav_panel_height) {
+                 const favoritesPanel = document.getElementById('favorites-panel');
+                 favoritesPanel.style.height = config.fav_panel_height;
+            }
+            
+            renderFavorites();
+        }
+
+        async function saveFavorites() {
+            await callApi('update_app_config', { favorites: favorites });
+            renderFavorites();
+        }
+
+        function renderFavorites() {
+            const container = document.getElementById('favorites-tree');
+            container.innerHTML = '';
+            
+            if (favorites.length === 0) {
+                container.innerHTML = '<div style="color:#999; font-size:12px; text-align:center; margin-top:10px;">No favorites added.</div>';
+                return;
+            }
+
+            favorites.forEach(path => {
+                const el = document.createElement('div');
+                el.className = 'tree-item';
+                el.style.justifyContent = 'space-between';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'name';
+                nameSpan.textContent = path;
+                nameSpan.title = path; // tooltip
+                nameSpan.style.overflow = 'hidden';
+                nameSpan.style.textOverflow = 'ellipsis';
+                nameSpan.style.whiteSpace = 'nowrap';
+                nameSpan.style.flexGrow = '1';
+                
+                // Remove button
+                const delBtn = document.createElement('span');
+                delBtn.innerHTML = '&times;';
+                delBtn.style.cursor = 'pointer';
+                delBtn.style.color = '#aaa';
+                delBtn.style.fontSize = '16px';
+                delBtn.style.marginLeft = '5px';
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    removeFavorite(path);
+                };
+                delBtn.onmouseover = () => delBtn.style.color = 'red';
+                delBtn.onmouseout = () => delBtn.style.color = '#aaa';
+
+                el.appendChild(nameSpan);
+                el.appendChild(delBtn);
+                
+                el.onclick = () => setTarget(path);
+                container.appendChild(el);
+            });
+        }
+
+        function addFavorite(path) {
+            if (!path) return;
+            if (!favorites.includes(path)) {
+                favorites.push(path);
+                saveFavorites();
+            }
+        }
+
+        function removeFavorite(path) {
+            favorites = favorites.filter(f => f !== path);
+            saveFavorites();
+        }
+
+        document.getElementById('btn-add-fav').onclick = () => {
+            if (currentTarget) {
+                addFavorite(currentTarget);
+            }
+        };
 
         // --- Target & Inspection ---
         const targetInput = document.getElementById('target-input');
