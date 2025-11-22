@@ -50,6 +50,7 @@
         #object-info-container { padding: 20px; user-select: text; -webkit-user-select: text; }
         h2.obj-title { margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 18px; user-select: text; -webkit-user-select: text; }
         .docstring { white-space: pre-wrap; font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; background-color: #fdfdfd; border: 1px solid #eee; padding: 10px; color: #444; max-height: 300px; overflow-y: auto; user-select: text; -webkit-user-select: text; cursor: text; }
+        body.console-hidden .docstring { max-height: calc(100vh - 150px); }
         .inspector-value { font-family: monospace; background: #eee; padding: 5px; border-radius: 3px; word-break: break-all; white-space: pre-wrap; user-select: text; -webkit-user-select: text; cursor: text; }
 
         /* Bottom Console */
@@ -72,6 +73,7 @@
     <div id="top-bar">
         <button id="btn-load" title="Open EDB Folder">Import</button>
         <button id="btn-reload" title="Reload Current EDB">Reload</button>
+        <button id="btn-toggle-console" title="Toggle Python Console">Console</button>
         <div style="width: 1px; height: 20px; background: #ccc; margin: 0 5px;"></div>
         <span style="font-weight: bold; margin-left: 10px;">Target:</span>
         <input type="text" id="target-input" placeholder="Select an object...">
@@ -169,6 +171,27 @@
             } else {
                 showLoading("Loading selected EDB...");
                 handleLoadResponse(res);
+            }
+        };
+
+        // --- Console Toggle ---
+        const btnToggleConsole = document.getElementById('btn-toggle-console');
+        const bottomPanel = document.getElementById('bottom-panel');
+        let isConsoleVisible = true;
+
+        btnToggleConsole.onclick = () => {
+            isConsoleVisible = !isConsoleVisible;
+            bottomPanel.style.display = isConsoleVisible ? 'flex' : 'none';
+            // Visual feedback: active state when hidden (or vice versa, user preference)
+            // Let's make it look "pressed" or "active" when visible is standard, 
+            // but here maybe darker when hidden to indicate it's off? 
+            // actually, usually buttons are just buttons. Let's leave styling simple.
+            btnToggleConsole.style.background = isConsoleVisible ? '#fff' : '#eee';
+            
+            if (isConsoleVisible) {
+                document.body.classList.remove('console-hidden');
+            } else {
+                document.body.classList.add('console-hidden');
             }
         };
 

@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+/pcb.aedb
+/pcb.aedb.bak
+/pcb.aedtresults
+/pcb.aedb
+/pcb.aedb
+/pcb.aedb
+pcb.aedt
