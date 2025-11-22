@@ -6,7 +6,7 @@
         body { margin: 0; overflow: hidden; display: flex; flex-direction: column; height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fcfcfc; color: #333; }
         
         /* Top Bar */
-        #top-bar { padding: 10px; background-color: #e1e1e1; border-bottom: 1px solid #bbb; display: flex; align-items: center; gap: 10px; }
+        #top-bar { padding: 10px; background-color: #e1e1e1; border-bottom: 1px solid #bbb; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
         #target-input { flex-grow: 1; padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 14px; }
         button { padding: 6px 12px; cursor: pointer; background-color: #fff; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; transition: background-color 0.1s; }
         button:hover { background-color: #f0f0f0; }
@@ -53,7 +53,7 @@
         .inspector-value { font-family: monospace; background: #eee; padding: 5px; border-radius: 3px; word-break: break-all; white-space: pre-wrap; user-select: text; -webkit-user-select: text; cursor: text; }
 
         /* Bottom Console */
-        #bottom-panel { height: 200px; background-color: #2d3436; color: #dfe6e9; display: flex; flex-direction: column; border-top: 1px solid #ccc; }
+        #bottom-panel { height: 200px; background-color: #2d3436; color: #dfe6e9; display: flex; flex-direction: column; border-top: 1px solid #ccc; flex-shrink: 0; }
         #bottom-panel .panel-header { background-color: #353b48; color: #dfe6e9; border-bottom: 1px solid #636e72; }
         #console-output-container { flex-grow: 1; overflow-y: auto; padding: 10px; font-family: monospace; font-size: 13px; }
         .console-entry { margin-bottom: 5px; border-bottom: 1px solid #444; padding-bottom: 5px; }
@@ -62,7 +62,7 @@
         .console-error { color: #ff7675; white-space: pre-wrap; }
         
         #console-input-wrapper { display: flex; border-top: 1px solid #636e72; background-color: #2d3436; padding: 5px; }
-        #python-console-input { flex-grow: 1; background: transparent; border: none; color: #fff; font-family: monospace; font-size: 13px; resize: none; outline: none; }
+        #python-console-input { flex-grow: 1; background: transparent; border: none; color: #fff; font-family: monospace; font-size: 13px; resize: none; outline: none; height: 24px; min-height: 24px; max-height: 24px; overflow-y: auto; }
         #execute-code { background-color: #0984e3; color: white; border: none; }
         #execute-code:hover { background-color: #0c7cd5; }
 
