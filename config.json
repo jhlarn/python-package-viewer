@@ -1,11 +1,10 @@
 {
     "aedt_version": "2024.1",
     "favorites": [
-        "edb.hfss.create_differential_wave_port",
-        "edb.components.ICs['U9']"
+        "edb.stackup.all_layers['1_Top']"
     ],
     "left_panel_width": "288px",
-    "right_panel_width": "331px",
+    "right_panel_width": "396px",
     "bottom_panel_height": "130px",
     "fav_panel_height": "282.8px"
 }
