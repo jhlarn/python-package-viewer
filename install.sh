@@ -23,7 +23,7 @@ fi
 if [ -d ".venv" ]; then
     echo ".venv already exists."
     echo "Updating dependencies..."
-    uv pip install -e .
+    uv pip install "pyedb>=0.64.0" "pywebview>=6.1"
 else
     echo ".venv not found. Setting up environment..."
     
@@ -35,7 +35,7 @@ else
     fi
 
     echo "Installing dependencies..."
-    uv pip install -e .
+    uv pip install "pyedb>=0.64.0" "pywebview>=6.1"
     if [ $? -ne 0 ]; then
         echo "Error: Failed to install dependencies."
         exit 1

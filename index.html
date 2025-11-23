@@ -73,13 +73,27 @@
         #execute-code { background-color: #0984e3; color: white; border: none; }
         #execute-code:hover { background-color: #0c7cd5; }
 
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-block; }
+        .dropbtn { background-color: #fff; color: #333; padding: 6px 12px; font-size: 13px; border: 1px solid #ccc; cursor: pointer; border-radius: 4px; }
+        .dropbtn:hover { background-color: #f0f0f0; }
+        .dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1000; border: 1px solid #ddd; border-radius: 4px; }
+        .dropdown-content a { color: black; padding: 12px 16px; text-decoration: none; display: block; font-size: 13px; cursor: pointer; }
+        .dropdown-content a:hover { background-color: #f1f1f1; }
+        .show { display: block; }
+
     </style>
 </head>
 <body>
     <div id="top-bar">
-        <button id="btn-load" title="Open EDB Folder">Import</button>
-        <button id="btn-reload" title="Reload Current EDB">Reload</button>
-        <button id="btn-toggle-console" title="Toggle Python Console">Console</button>
+        <div class="dropdown">
+            <button id="btn-options" class="dropbtn">Options</button>
+            <div id="options-dropdown" class="dropdown-content">
+                <a id="menu-import">Open Custom .aedb...</a>
+                <a id="menu-reload">Reload Default .aedb</a>
+                <a id="menu-console">Console On/Off</a>
+            </div>
+        </div>
         <div style="width: 1px; height: 20px; background: #ccc; margin: 0 5px;"></div>
         <span style="font-weight: bold; margin-left: 10px;">Target:</span>
         <input type="text" id="target-input" placeholder="Select an object...">
@@ -114,7 +128,7 @@
         <div id="center-content">
              <div class="panel-header">Object Details</div>
              <div id="object-info-container" class="panel-body">
-                 <div style="color: #888; text-align: center; margin-top: 50px;">Select an object from the left panel or enter a target above.</div>
+                 <div style="color: #888; text-align: center; margin-top: 50px;">Waiting for EDB initialization...</div>
              </div>
         </div>
         
@@ -159,7 +173,8 @@
 
         function showLoading(msg) {
             const container = document.getElementById('object-info-container');
-            container.innerHTML = `<div style="color:#888; text-align:center; margin-top:50px;">${msg || "Loading..."} Please wait.</div>`;
+            const defaultMsg = "Loading EDB... This may take 30 seconds to 1 minute. Please wait.";
+            container.innerHTML = `<div style="color:#888; text-align:center; margin-top:50px;">${msg || defaultMsg}</div>`;
         }
 
         function handleLoadResponse(res) {
@@ -172,20 +187,37 @@
                  container.innerHTML = '<div style="color: #888; text-align: center; margin-top: 50px;">Load cancelled.</div>';
             } else {
                  const msg = res && res.message ? res.message : "EDB Loaded.";
-                 container.innerHTML = `<div style="color: green; text-align: center; margin-top: 50px;">${msg}<br><br>Select an object from the left panel or enter a target above.</div>`;
+                 container.innerHTML = `<div style="color: green; text-align: center; margin-top: 50px;">${msg}</div>`;
             }
 
             loadGlobalVars();
             loadFavorites();
         }
 
-        document.getElementById('btn-reload').onclick = async () => {
-            showLoading("Reloading EDB...");
+        // --- Dropdown Logic ---
+        document.getElementById('btn-options').onclick = () => {
+            document.getElementById("options-dropdown").classList.toggle("show");
+        };
+
+        window.onclick = (event) => {
+            if (!event.target.matches('.dropbtn')) {
+                const dropdowns = document.getElementsByClassName("dropdown-content");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        };
+
+        document.getElementById('menu-reload').onclick = async () => {
+            showLoading("Reloading EDB... This may take 30 seconds to 1 minute. Please wait.");
             const res = await callApi('load_edb');
             handleLoadResponse(res);
         };
 
-        document.getElementById('btn-load').onclick = async () => {
+        document.getElementById('menu-import').onclick = async () => {
             // We don't show loading immediately because dialog blocks, but good to indicate intent
             // However, pywebview dialog might block the UI update if not careful, but usually fine.
             const res = await callApi('pick_edb_folder');
@@ -193,24 +225,21 @@
                 // Do nothing or show status?
                 console.log("Pick cancelled");
             } else {
-                showLoading("Loading selected EDB...");
+                showLoading("Loading selected EDB... This may take 30 seconds to 1 minute. Please wait.");
                 handleLoadResponse(res);
             }
         };
 
         // --- Console Toggle ---
-        const btnToggleConsole = document.getElementById('btn-toggle-console');
+        // const btnToggleConsole = document.getElementById('btn-toggle-console'); // Removed
+        const menuConsole = document.getElementById('menu-console');
         const bottomPanel = document.getElementById('bottom-panel');
         let isConsoleVisible = true;
 
-        btnToggleConsole.onclick = () => {
+        menuConsole.onclick = () => {
             isConsoleVisible = !isConsoleVisible;
             bottomPanel.style.display = isConsoleVisible ? 'flex' : 'none';
-            // Visual feedback: active state when hidden (or vice versa, user preference)
-            // Let's make it look "pressed" or "active" when visible is standard, 
-            // but here maybe darker when hidden to indicate it's off? 
-            // actually, usually buttons are just buttons. Let's leave styling simple.
-            btnToggleConsole.style.background = isConsoleVisible ? '#fff' : '#eee';
+            // Visual feedback in menu? Maybe add a checkmark logic later if needed.
             
             if (isConsoleVisible) {
                 document.body.classList.remove('console-hidden');

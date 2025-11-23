@@ -21,7 +21,7 @@ if %errorlevel% neq 0 (
 if exist .venv (
     echo .venv already exists.
     echo Updating dependencies...
-    uv pip install -e .
+    uv pip install pyedb>=0.64.0 pywebview>=6.1
 ) else (
     echo .venv not found. Setting up environment...
     
@@ -34,7 +34,7 @@ if exist .venv (
     )
 
     echo Installing dependencies...
-    uv pip install -e .
+    uv pip install pyedb>=0.64.0 pywebview>=6.1
     if %errorlevel% neq 0 (
         echo Error: Failed to install dependencies.
         pause
