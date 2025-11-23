@@ -77,10 +77,10 @@ class Api:
         saved_version = config.get("aedt_version")
 
         # Define versions to try
-        # Default priority: Saved -> 2024.1 -> others
+        # Default priority: Saved -> 2023.1 -> others
         current_year = datetime.now().year
         default_versions = []
-        for year in range(2024, current_year + 1):
+        for year in range(2023, current_year + 1):
             default_versions.append(f"{year}.1")
             default_versions.append(f"{year}.2")
 

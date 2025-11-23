@@ -1,10 +1,8 @@
 {
     "aedt_version": "2024.1",
-    "favorites": [
-        "edb.stackup.all_layers['1_Top']"
-    ],
-    "left_panel_width": "288px",
-    "right_panel_width": "396px",
+    "favorites": [],
+    "left_panel_width": "245px",
+    "right_panel_width": "314px",
     "bottom_panel_height": "195px",
     "fav_panel_height": "282.8px"
 }
