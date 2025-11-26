@@ -6,3 +6,147 @@ Starting Batch Run: 4:39:20 AM  Nov 27, 2025
 Running as user : ANSYS\mlin
 Temp directory: C:\Users\mlin\AppData\Local\Temp
 Project directory: D:\demo2
+The project 'Project8' has been edited and/or solved. Do you want to save the changes?
+-- Message Window --
+      *Global - Messages
+        [info] GRPC server running on port: 64558. 
+        [info] Project Project8 has been created.
+        [info] No design is present. Inserting a new design.
+        [info] Added design 'HFSS_6QG' of type HFSS.
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project8 exists and has been read.
+        [info] No consistent unique design is present. Inserting a new design.
+        [info] Added design 'Circuit Design_MEX' of type Circuit Design.
+        [info] Aedt Objects correctly read
+        [info] ModelerCircuit class has been initialized! Elapsed time: 0m 0sec
+        [info] ModelerNexxim class has been initialized!
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project8 exists and has been read.
+        [info] No consistent unique design is present. Inserting a new design.
+        [info] OpenGL Version: 4.6.0 - Build 32.0.101.6881
+        [info] Added design 'HFSS 3D Layout Design_DEJ' of type HFSS 3D Layout Design.
+        [info] Aedt Objects correctly read
+        [info] Loading Modeler.
+        [info] Modeler loaded.
+        [info] EDB loaded.
+        [info] Layers loaded.
+        [info] Primitives loaded.
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project8 exists and has been read.
+        [info] Active Design set to 2;HFSS 3D Layout Design_DEJ
+        [info] Active Design set to 2;HFSS 3D Layout Design_DEJ
+        [info] Aedt Objects correctly read
+        [info] Loading Modeler.
+        [info] Modeler loaded.
+        [info] EDB loaded.
+        [info] Layers loaded.
+        [info] Primitives loaded.
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project8 exists and has been read.
+        [info] Active Design set to 2;HFSS 3D Layout Design_DEJ
+        [info] Active Design set to 2;HFSS 3D Layout Design_DEJ
+        [info] Aedt Objects correctly read
+        [info] Loading Modeler.
+        [info] Modeler loaded.
+        [info] EDB loaded.
+        [info] Layers loaded.
+        [info] Primitives loaded.
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [error] **************************************************************
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 973, in _bootstrap
+        [error]     self._bootstrap_inner()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 1016, in _bootstrap_inner
+        [error]     self.run()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 953, in run
+        [error]     self._target(*self._args, **self._kwargs)
+        [error]   File "D:\OneDrive - ANSYS, Inc\a-client-repositories\lmz-pyedb-explorer-202511\pyedb-explorer\backend.py", line 172, in get_object_info
+        [error]     obj = eval(obj_path, self.globals, self.globals)
+        [error]   File "<string>", line 1, in <module>
+        [error] 'nonetype' object has no attribute 'nets' on plot
+        [error] Last Electronics Desktop Message - [error] 'nonetype' object has no attribute 'nets' on plot  
+        [error] **************************************************************
+        [error] **************************************************************
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 973, in _bootstrap
+        [error]     self._bootstrap_inner()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 1016, in _bootstrap_inner
+        [error]     self.run()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 953, in run
+        [error]     self._target(*self._args, **self._kwargs)
+        [error]   File "D:\OneDrive - ANSYS, Inc\a-client-repositories\lmz-pyedb-explorer-202511\pyedb-explorer\backend.py", line 151, in evaluate
+        [error]     result = eval(code, self.globals, self.globals)
+        [error]   File "<string>", line 1, in <module>
+        [error] 'nonetype' object has no attribute 'nets' on plot
+        [error] Last Electronics Desktop Message - [error] 'nonetype' object has no attribute 'nets' on plot  
+        [error] **************************************************************
+        [error] **************************************************************
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 973, in _bootstrap
+        [error]     self._bootstrap_inner()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 1016, in _bootstrap_inner
+        [error]     self.run()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 953, in run
+        [error]     self._target(*self._args, **self._kwargs)
+        [error]   File "D:\OneDrive - ANSYS, Inc\a-client-repositories\lmz-pyedb-explorer-202511\pyedb-explorer\backend.py", line 172, in get_object_info
+        [error]     obj = eval(obj_path, self.globals, self.globals)
+        [error]   File "<string>", line 1, in <module>
+        [error] 'nonetype' object has no attribute 'nets' on plot
+        [error] Last Electronics Desktop Message - [error] 'nonetype' object has no attribute 'nets' on plot  
+        [error] **************************************************************
+        [error] **************************************************************
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 973, in _bootstrap
+        [error]     self._bootstrap_inner()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 1016, in _bootstrap_inner
+        [error]     self.run()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\threading.py", line 953, in run
+        [error]     self._target(*self._args, **self._kwargs)
+        [error]   File "D:\OneDrive - ANSYS, Inc\a-client-repositories\lmz-pyedb-explorer-202511\pyedb-explorer\backend.py", line 172, in get_object_info
+        [error]     obj = eval(obj_path, self.globals, self.globals)
+        [error]   File "<string>", line 1, in <module>
+        [error] 'nonetype' object has no attribute 'nets' on plot
+        [error] Last Electronics Desktop Message - [error] 'nonetype' object has no attribute 'nets' on plot  
+        [error] **************************************************************
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project8 exists and has been read.
+        [info] Active Design set to HFSS_6QG
+        [info] Active Design set to HFSS_6QG
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project8 exists and has been read.
+        [info] Active Design set to HFSS_6QG
+        [info] Active Design set to HFSS_6QG
+        [info] Aedt Objects correctly read
+        [info] The project 'Project8' has been edited and/or solved. Do you want to save the changes?
+-- Message Window --
+ 
+Ansys Electronics Desktop Version 2025.2.0, Build: 2025-05-16 12:03:40
+Location: C:\Program Files\ANSYS Inc\v252\AnsysEM\ansysedt.exe
+Non Graphical Mode: No Project??
+Starting Batch Run: 7:50:08 AM  Nov 27, 2025
+Running as user : ANSYS\mlin
+Temp directory: C:\Users\mlin\AppData\Local\Temp
+Project directory: D:\demo2

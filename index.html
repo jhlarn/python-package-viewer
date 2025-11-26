@@ -315,13 +315,14 @@
             min-height: 25px;
         }
 
-        #console-output-container {
+        #console-scroll-container {
             flex-grow: 1;
             overflow-y: auto;
             padding: 10px;
             font-family: 'Consolas', 'Monaco', monospace;
             font-size: 13px;
             line-height: 1.4;
+            cursor: text;
         }
 
         .console-entry {
@@ -349,9 +350,7 @@
 
         #console-input-wrapper {
             display: flex;
-            border-top: 1px solid #333;
-            background-color: #1e1e1e;
-            padding: 5px 5px 5px 10px;
+            padding: 2px 0 0 0;
             align-items: flex-start;
         }
 
@@ -524,12 +523,12 @@
                 <button id="btn-clear-console" class="icon-btn" title="Clear Console Output">Clear</button>
             </div>
         </div>
-        <div id="console-output-container"></div>
-        <div id="console-input-wrapper">
-            <span class="console-prompt">>>></span>
-            <textarea id="python-console-input" rows="1"
-                placeholder="Type code here... (Shift+Enter for new line)"></textarea>
-            <!-- Run button hidden, using Enter -->
+        <div id="console-scroll-container" onclick="document.getElementById('python-console-input').focus()">
+            <div id="console-history"></div>
+            <div id="console-input-wrapper">
+                <span class="console-prompt">>>></span>
+                <textarea id="python-console-input" rows="1" placeholder=""></textarea>
+            </div>
         </div>
     </div>
 
@@ -1038,7 +1037,8 @@
 
         // --- Console ---
         const consoleInput = document.getElementById('python-console-input');
-        const consoleOutput = document.getElementById('console-output-container');
+        const consoleHistoryContainer = document.getElementById('console-history');
+        const consoleScrollContainer = document.getElementById('console-scroll-container');
         const btnClearConsole = document.getElementById('btn-clear-console');
         const btnResetConsole = document.getElementById('btn-reset-console');
 
@@ -1050,6 +1050,11 @@
         function autoResize() {
             consoleInput.style.height = 'auto';
             consoleInput.style.height = consoleInput.scrollHeight + 'px';
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            consoleScrollContainer.scrollTop = consoleScrollContainer.scrollHeight;
         }
 
         consoleInput.addEventListener('input', autoResize);
@@ -1099,12 +1104,12 @@
         // document.getElementById('execute-code').onclick = runConsole; // Button removed
 
         btnClearConsole.onclick = () => {
-            consoleOutput.innerHTML = '';
+            consoleHistoryContainer.innerHTML = '';
         };
 
         btnResetConsole.onclick = async () => {
             await callApi('reset_console');
-            consoleOutput.innerHTML = '<div class="console-entry" style="color:#888; font-style:italic;">Console reset. Global variables cleared.</div>';
+            consoleHistoryContainer.innerHTML = '<div class="console-entry" style="color:#888; font-style:italic;">Console reset. Global variables cleared.</div>';
             loadGlobalVars();
         };
 
@@ -1125,30 +1130,40 @@
             // Escape HTML in code for display
             const safeCode = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             entry.innerHTML = `<div class="console-input-line">>>> ${safeCode}</div>`;
-            consoleOutput.appendChild(entry);
+            consoleHistoryContainer.appendChild(entry);
 
-            // Execute
-            const res = await callApi('evaluate', code);
-
-            if (res.output) {
-                const outDiv = document.createElement('div');
-                outDiv.className = 'console-result';
-                outDiv.textContent = res.output;
-                entry.appendChild(outDiv);
-            }
-            if (res.error) {
-                const errDiv = document.createElement('div');
-                errDiv.className = 'console-error';
-                errDiv.textContent = res.error;
-                entry.appendChild(errDiv);
-            }
-
+            // Clear input and hide prompt while executing
             consoleInput.value = '';
-            consoleInput.style.height = '18px'; // Reset height
-            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            autoResize();
+            const inputWrapper = document.getElementById('console-input-wrapper');
+            inputWrapper.style.display = 'none';
+            scrollToBottom();
 
-            // Refresh globals as code might have changed them
-            loadGlobalVars();
+            try {
+                // Execute
+                const res = await callApi('evaluate', code);
+
+                if (res && res.output) {
+                    const outDiv = document.createElement('div');
+                    outDiv.className = 'console-result';
+                    outDiv.textContent = res.output;
+                    entry.appendChild(outDiv);
+                }
+                if (res && res.error) {
+                    const errDiv = document.createElement('div');
+                    errDiv.className = 'console-error';
+                    errDiv.textContent = res.error;
+                    entry.appendChild(errDiv);
+                }
+            } finally {
+                // Show prompt again
+                inputWrapper.style.display = 'flex';
+                consoleInput.focus();
+                scrollToBottom();
+
+                // Refresh globals as code might have changed them
+                loadGlobalVars();
+            }
         }
 
         function formatDocstring(doc) {
