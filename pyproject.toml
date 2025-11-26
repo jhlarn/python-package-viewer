@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "pyaedt>=0.22.2",
     "pyedb>=0.64.0",
     "pywebview>=6.1",
 ]
