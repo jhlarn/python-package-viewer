@@ -1,6 +1,8 @@
 {
     "aedt_version": "2024.1",
-    "favorites": [],
+    "favorites": [
+        "edb.design_options"
+    ],
     "left_panel_width": "245px",
     "right_panel_width": "314px",
     "bottom_panel_height": "195px",

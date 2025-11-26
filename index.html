@@ -128,7 +128,7 @@
         <div id="center-content">
              <div class="panel-header">Object Details</div>
              <div id="object-info-container" class="panel-body">
-                 <div style="color: #888; text-align: center; margin-top: 50px;">Waiting for EDB initialization...</div>
+                 <div style="color: #888; text-align: center; margin-top: 50px;">EDB not loaded. Use Options > Open/Reload to load.</div>
              </div>
         </div>
         
@@ -164,11 +164,14 @@
         window.addEventListener('pywebviewready', async function() {
             console.log("PyWebview Ready");
             
-            // Trigger EDB load
-            showLoading("Loading default EDB...");
-            
-            const res = await callApi('load_edb');
-            handleLoadResponse(res);
+            // Do NOT trigger EDB load automatically
+            // showLoading("Loading default EDB...");
+            // const res = await callApi('load_edb');
+            // handleLoadResponse(res);
+
+            // Just load UI state
+            loadGlobalVars();
+            loadFavorites();
         });
 
         function showLoading(msg) {
