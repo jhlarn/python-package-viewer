@@ -519,7 +519,10 @@
     <div id="bottom-panel">
         <div class="panel-header">
             <span>Python Console</span>
-            <button id="btn-clear-console" class="icon-btn" title="Clear Console">Clear</button>
+            <div>
+                <button id="btn-reset-console" class="icon-btn" title="Reset Global Variables">Delete</button>
+                <button id="btn-clear-console" class="icon-btn" title="Clear Console Output">Clear</button>
+            </div>
         </div>
         <div id="console-output-container"></div>
         <div id="console-input-wrapper">
@@ -1037,6 +1040,7 @@
         const consoleInput = document.getElementById('python-console-input');
         const consoleOutput = document.getElementById('console-output-container');
         const btnClearConsole = document.getElementById('btn-clear-console');
+        const btnResetConsole = document.getElementById('btn-reset-console');
 
         let consoleHistory = [];
         let consoleHistoryIndex = -1;
@@ -1096,6 +1100,12 @@
 
         btnClearConsole.onclick = () => {
             consoleOutput.innerHTML = '';
+        };
+
+        btnResetConsole.onclick = async () => {
+            await callApi('reset_console');
+            consoleOutput.innerHTML = '<div class="console-entry" style="color:#888; font-style:italic;">Console reset. Global variables cleared.</div>';
+            loadGlobalVars();
         };
 
         async function runConsole() {

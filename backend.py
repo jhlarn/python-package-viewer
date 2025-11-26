@@ -124,6 +124,13 @@ class Api:
         self.globals['edb'] = error_msg
         return {"status": "error", "message": error_msg}
 
+    def reset_console(self):
+        """Resets the console globals, preserving the 'edb' object."""
+        self.globals = {}
+        if hasattr(self, 'edb') and self.edb:
+            self.globals['edb'] = self.edb
+        return {"status": "success", "message": "Console reset."}
+
     def get_global_vars(self):
         """Returns a list of global variable names and their types."""
         vars_info = []
