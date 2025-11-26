@@ -1,10 +1,10 @@
 {
     "aedt_version": "2024.1",
     "favorites": [
-        "edb.design_options"
+        "hfss.set_registry_from_file"
     ],
-    "left_panel_width": "245px",
-    "right_panel_width": "314px",
+    "left_panel_width": "253px",
+    "right_panel_width": "428px",
     "bottom_panel_height": "195px",
     "fav_panel_height": "282.8px"
 }

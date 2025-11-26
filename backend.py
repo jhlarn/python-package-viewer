@@ -146,13 +146,14 @@ class Api:
         # Capture stdout/stderr
         with redirect_stdout(f), redirect_stderr(f):
             try:
-                # We use exec for statements and eval for expressions if possible, 
-                # but for a console, usually exec is safer for general code blocks.
-                # To allow "return" values from single expressions, we can try eval first
-                # or just rely on printing.
-                # To ensure variables defined in console are available globally (and thus in the UI tree),
-                # we use self.globals for both locals and globals.
-                exec(code, self.globals, self.globals)
+                # Try to evaluate as an expression first to support REPL-like behavior
+                try:
+                    result = eval(code, self.globals, self.globals)
+                    if result is not None:
+                        print(repr(result))
+                except SyntaxError:
+                    # If it's not a valid expression (e.g. statements like x=1), use exec
+                    exec(code, self.globals, self.globals)
             except Exception as e:
                 error_msg = str(e)
                 print(f"Error: {e}")
