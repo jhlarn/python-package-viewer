@@ -47,17 +47,16 @@ Once the installation is complete, you can launch the EDB Explorer GUI:
     -   A successful version will be saved in `config.json` for faster loading in the future.
 
 3.  **GUI Layout**:
-    -   **Left Panel**: Displays "Global Variables" (the loaded `edb` object and variables from the console) and a "Favorites" section.
+    -   **Left Panel**: Displays "Global Variables" (the loaded `edb` object and variables from the console).
     -   **Center Panel**: Shows "Object Details" (type, value, and formatted docstring) for the currently selected object. The docstring panel will dynamically fill available space.
     -   **Right Panel**: Displays "Members / Inspector" (properties and methods) of the selected object. It includes a regex filter input to search through members.
     -   **Bottom Panel**: A "Python Console" for interactive code execution. Its visibility can be toggled.
 
 4.  **Interacting with Objects**:
-    -   **Select an Object**: Click on an object in the "Global Variables" or "Favorites" tree to display its details in the Center Panel and its members in the Right Panel. The object's path will appear in the "Target" input field.
+    -   **Select an Object**: Click on an object in the "Global Variables" tree to display its details in the Center Panel and its members in the Right Panel. The object's path will appear in the "Target" input field.
     -   **Navigate Members**: Click on a property or method in the "Members / Inspector" panel to append it to the "Target" input and inspect it further.
     -   **Undo/Redo Navigation**: Use the "Undo" and "Redo" buttons (to the right of the "Target" input) to navigate through your inspection history.
-    -   **Add to Favorites**: Click the "★" button next to the "Target" input to add the current object path to your Favorites. Favorites are persisted in `config.json`.
-    -   **Remove Favorite**: Click the "×" next to a favorite item to remove it.
+
     -   **Filter Members**: Use the regex input field in the "Members / Inspector" panel to filter the displayed properties and methods.
 
 5.  **Loading EDB Files**:
@@ -72,7 +71,7 @@ Once the installation is complete, you can launch the EDB Explorer GUI:
     -   Variables defined in the console (e.g., `my_var = 123`) will appear in the "Global Variables" panel after execution.
 
 7.  **Tunable Panel Borders**:
-    -   Drag the gray separator lines between the Left/Center, Center/Right, and Global Vars/Favorites panels, as well as between the main content and the console, to adjust their sizes.
+    -   Drag the gray separator lines between the Left/Center, Center/Right panels, as well as between the main content and the console, to adjust their sizes.
     -   Your preferred panel dimensions are automatically saved to `config.json` and restored on startup.
 
-**Configuration Persistence**: Most user preferences, including AEDT version, Favorites, and panel sizes, are saved in `config.json`.
+**Configuration Persistence**: Most user preferences, including AEDT version and panel sizes, are saved in `config.json`.

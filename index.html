@@ -461,7 +461,7 @@
         <div style="width: 1px; height: 20px; background: #ccc; margin: 0 5px;"></div>
         <span style="font-weight: bold; margin-left: 10px;">Target:</span>
         <input type="text" id="target-input" placeholder="Select an object...">
-        <button id="btn-add-fav" title="Add current target to favorites" style="margin-left: 5px;">&#9733;</button>
+
         <button id="btn-undo" disabled title="Go Back">Undo</button>
         <button id="btn-redo" disabled title="Go Forward">Redo</button>
     </div>
@@ -477,16 +477,7 @@
                 <div id="global-vars-tree" class="panel-body"></div>
             </div>
 
-            <div id="left-panel-resizer" style="height: 5px; background: #ccc; cursor: ns-resize; flex-shrink: 0;">
-            </div>
 
-            <div id="favorites-panel"
-                style="height: 30%; min-height: 50px; display: flex; flex-direction: column; overflow: hidden; background-color: #fff8e1;">
-                <div class="panel-header" style="background-color: #fff3cd; color: #856404;">
-                    <span>Favorites</span>
-                </div>
-                <div id="favorites-tree" class="panel-body"></div>
-            </div>
         </div>
 
         <div id="main-h-resizer-1" style="width: 5px; background: #ccc; cursor: ew-resize; flex-shrink: 0;"></div>
@@ -546,7 +537,7 @@
 
             // Just load UI state
             loadGlobalVars();
-            loadFavorites();
+            loadAppConfig();
         });
 
         function showLoading(msg) {
@@ -569,7 +560,7 @@
             }
 
             loadGlobalVars();
-            loadFavorites();
+            loadAppConfig();
         }
 
         // --- Dropdown Logic ---
@@ -694,10 +685,7 @@
             });
         }
 
-        // 1. Favorites Split (Existing, Vertical internal to Left Panel) - Handled separately above or refactor?
-        // Let's refactor existing favorites resizer to use similar pattern or keep as is.
-        // The existing one is a bit specific because it's inside a flex column.
-        // Let's keep the existing favorites resizer logic as is for now, it works.
+
 
         // 2. Left Panel Width
         setupResizer('main-h-resizer-1', 'left-panel', 'h', 'left_panel_width');
@@ -713,34 +701,7 @@
         setupResizer('bottom-panel-resizer', 'bottom-panel', 'v', 'bottom_panel_height', 50, true);
 
 
-        // Existing Favorites Resizer (Keep specifically as it handles internal flex height)
-        const favResizer = document.getElementById('left-panel-resizer');
-        const favoritesPanel = document.getElementById('favorites-panel');
-        const leftPanel = document.getElementById('left-panel');
-        let isFavResizing = false;
 
-        favResizer.addEventListener('mousedown', (e) => {
-            isFavResizing = true;
-            document.body.style.cursor = 'ns-resize';
-            e.preventDefault();
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isFavResizing) return;
-            const leftPanelRect = leftPanel.getBoundingClientRect();
-            let newHeight = leftPanelRect.bottom - e.clientY;
-            if (newHeight < 50) newHeight = 50;
-            if (newHeight > leftPanelRect.height - 50) newHeight = leftPanelRect.height - 50;
-            favoritesPanel.style.height = `${newHeight}px`;
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (isFavResizing) {
-                isFavResizing = false;
-                document.body.style.cursor = 'default';
-                callApi('update_app_config', { fav_panel_height: favoritesPanel.style.height });
-            }
-        });
 
 
         // --- Global Vars ---
@@ -760,101 +721,15 @@
             }
         }
 
-        // --- Favorites ---
-        let favorites = [];
-
-        async function loadFavorites() {
+        // --- App Config ---
+        async function loadAppConfig() {
             const config = await callApi('get_app_config');
-            if (config && config.favorites) {
-                favorites = config.favorites;
-            } else {
-                favorites = [];
-            }
-
-            // Load saved height from config
-            if (config && config.fav_panel_height) {
-                const favoritesPanel = document.getElementById('favorites-panel');
-                favoritesPanel.style.height = config.fav_panel_height;
-            }
-
-            // Load other panel dimensions
             if (config) {
                 if (config.left_panel_width) document.getElementById('left-panel').style.width = config.left_panel_width;
                 if (config.right_panel_width) document.getElementById('right-panel').style.width = config.right_panel_width;
                 if (config.bottom_panel_height) document.getElementById('bottom-panel').style.height = config.bottom_panel_height;
             }
-
-            renderFavorites();
         }
-
-        async function saveFavorites() {
-            await callApi('update_app_config', { favorites: favorites });
-            renderFavorites();
-        }
-
-        function renderFavorites() {
-            const container = document.getElementById('favorites-tree');
-            container.innerHTML = '';
-
-            if (favorites.length === 0) {
-                container.innerHTML = '<div style="color:#999; font-size:12px; text-align:center; margin-top:10px;">No favorites added.</div>';
-                return;
-            }
-
-            favorites.forEach(path => {
-                const el = document.createElement('div');
-                el.className = 'tree-item';
-                el.style.justifyContent = 'space-between';
-
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'name';
-                nameSpan.textContent = path;
-                nameSpan.title = path; // tooltip
-                nameSpan.style.overflow = 'hidden';
-                nameSpan.style.textOverflow = 'ellipsis';
-                nameSpan.style.whiteSpace = 'nowrap';
-                nameSpan.style.flexGrow = '1';
-
-                // Remove button
-                const delBtn = document.createElement('span');
-                delBtn.innerHTML = '&times;';
-                delBtn.style.cursor = 'pointer';
-                delBtn.style.color = '#aaa';
-                delBtn.style.fontSize = '16px';
-                delBtn.style.marginLeft = '5px';
-                delBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    removeFavorite(path);
-                };
-                delBtn.onmouseover = () => delBtn.style.color = 'red';
-                delBtn.onmouseout = () => delBtn.style.color = '#aaa';
-
-                el.appendChild(nameSpan);
-                el.appendChild(delBtn);
-
-                el.onclick = () => setTarget(path);
-                container.appendChild(el);
-            });
-        }
-
-        function addFavorite(path) {
-            if (!path) return;
-            if (!favorites.includes(path)) {
-                favorites.push(path);
-                saveFavorites();
-            }
-        }
-
-        function removeFavorite(path) {
-            favorites = favorites.filter(f => f !== path);
-            saveFavorites();
-        }
-
-        document.getElementById('btn-add-fav').onclick = () => {
-            if (currentTarget) {
-                addFavorite(currentTarget);
-            }
-        };
 
         // --- Target & Inspection ---
         const targetInput = document.getElementById('target-input');
