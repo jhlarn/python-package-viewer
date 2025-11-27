@@ -1,4 +1,4 @@
-# EDB Explorer
+# Python Package Viewer
 
 This tool provides a graphical user interface (GUI) to explore EDB (Electronic Database) files using PyEDB. It allows you to inspect objects, properties, methods, and interact with the EDB through a Python console.
 

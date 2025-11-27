@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>EDB Explorer</title>
+    <title>Python Package Viewer</title>
     <style>
         body {
             margin: 0;
@@ -453,8 +453,6 @@
         <div class="dropdown">
             <button id="btn-options" class="dropbtn">Options</button>
             <div id="options-dropdown" class="dropdown-content">
-                <a id="menu-import">Open Custom .aedb...</a>
-                <a id="menu-reload">Reload Default .aedb</a>
                 <a id="menu-console">Console On/Off</a>
             </div>
         </div>
@@ -486,8 +484,61 @@
         <div id="center-content">
             <div class="panel-header">Object Details</div>
             <div id="object-info-container" class="panel-body">
-                <div style="color: #888; text-align: center; margin-top: 50px;">EDB not loaded. Use Options >
-                    Open/Reload to load.</div>
+                <div style="padding: 40px; color: #444; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                    <h2
+                        style="color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
+                        Welcome to Python Package Viewer</h2>
+
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; color: #0056b3; margin-bottom: 10px;">1. Initialize an Object</h3>
+                        <p style="margin-bottom: 10px; font-size: 14px;">Start by initializing an AEDT object in the
+                            <strong>Python Console</strong> below:
+                        </p>
+                        <div
+                            style="background: #f8f9fa; border: 1px solid #e9ecef; border-left: 4px solid #0056b3; border-radius: 4px; padding: 15px; font-family: 'Consolas', monospace; font-size: 13px; color: #333;">
+                            <span style="color: #d73a49;">from</span> ansys.aedt.core <span
+                                style="color: #d73a49;">import</span> Hfss<br>
+                            hfss = Hfss()
+                        </div>
+                        <p style="margin-bottom: 10px; font-size: 14px; margin-top: 15px;">Or open an existing design:
+                        </p>
+                        <div
+                            style="background: #f8f9fa; border: 1px solid #e9ecef; border-left: 4px solid #0056b3; border-radius: 4px; padding: 15px; font-family: 'Consolas', monospace; font-size: 13px; color: #333;">
+                            <span style="color: #d73a49;">from</span> ansys.aedt.core <span
+                                style="color: #d73a49;">import</span> Hfss<br>
+                            hfss = Hfss(<span style="color: #032f62;">'c:\\design.aedt'</span>)
+                        </div>
+                        <p style="font-size: 13px; color: #666; margin-top: 5px;">Once initialized, the object (e.g.,
+                            <code>hfss</code>) will appear in the <strong>Global Variables</strong> panel on the left.
+                        </p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h3 style="font-size: 16px; color: #0056b3; margin-bottom: 10px;">2. Explore & Inspect</h3>
+                            <ul style="padding-left: 20px; font-size: 14px; margin: 0;">
+                                <li style="margin-bottom: 8px;">Click variables in the <strong>Left Panel</strong> to
+                                    inspect them.</li>
+                                <li style="margin-bottom: 8px;">View object details, values, and documentation in this
+                                    <strong>Center Panel</strong>.
+                                </li>
+                                <li style="margin-bottom: 8px;">Browse properties and methods in the <strong>Right
+                                        Panel</strong>.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 16px; color: #0056b3; margin-bottom: 10px;">3. Drill Down</h3>
+                            <ul style="padding-left: 20px; font-size: 14px; margin: 0;">
+                                <li style="margin-bottom: 8px;">Click on members in the Right Panel to drill down into
+                                    child objects.</li>
+                                <li style="margin-bottom: 8px;">Use the <strong>Target</strong> bar at the top to see
+                                    the current path.</li>
+                                <li style="margin-bottom: 8px;">Use <strong>Undo/Redo</strong> buttons to navigate your
+                                    history.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -580,24 +631,7 @@
             }
         };
 
-        document.getElementById('menu-reload').onclick = async () => {
-            showLoading("Reloading EDB... This may take 30 seconds to 1 minute. Please wait.");
-            const res = await callApi('load_edb');
-            handleLoadResponse(res);
-        };
 
-        document.getElementById('menu-import').onclick = async () => {
-            // We don't show loading immediately because dialog blocks, but good to indicate intent
-            // However, pywebview dialog might block the UI update if not careful, but usually fine.
-            const res = await callApi('pick_edb_folder');
-            if (res.status === 'cancelled') {
-                // Do nothing or show status?
-                console.log("Pick cancelled");
-            } else {
-                showLoading("Loading selected EDB... This may take 30 seconds to 1 minute. Please wait.");
-                handleLoadResponse(res);
-            }
-        };
 
         // --- Console Toggle ---
         // const btnToggleConsole = document.getElementById('btn-toggle-console'); // Removed
@@ -986,6 +1020,50 @@
             await callApi('reset_console');
             consoleHistoryContainer.innerHTML = '<div class="console-entry" style="color:#888; font-style:italic;">Console reset. Global variables cleared.</div>';
             loadGlobalVars();
+
+            // Reset Target and Panels
+            currentTarget = "";
+            targetInput.value = "";
+            document.getElementById('inspector-content').innerHTML = "";
+
+            // Restore initial help text in Object Details
+            const container = document.getElementById('object-info-container');
+            container.innerHTML = `
+                <div style="padding: 40px; color: #444; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                    <h2 style="color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">Welcome to Python Package Viewer</h2>
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="font-size: 16px; color: #0056b3; margin-bottom: 10px;">1. Initialize an Object</h3>
+                        <p style="margin-bottom: 10px; font-size: 14px;">Start by initializing an AEDT object in the <strong>Python Console</strong> below:</p>
+                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-left: 4px solid #0056b3; border-radius: 4px; padding: 15px; font-family: 'Consolas', monospace; font-size: 13px; color: #333;">
+                            <span style="color: #d73a49;">from</span> ansys.aedt.core <span style="color: #d73a49;">import</span> Hfss<br>
+                            hfss = Hfss()
+                        </div>
+                        <p style="margin-bottom: 10px; font-size: 14px; margin-top: 15px;">Or open an existing design:</p>
+                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-left: 4px solid #0056b3; border-radius: 4px; padding: 15px; font-family: 'Consolas', monospace; font-size: 13px; color: #333;">
+                            <span style="color: #d73a49;">from</span> ansys.aedt.core <span style="color: #d73a49;">import</span> Hfss<br>
+                            hfss = Hfss(<span style="color: #032f62;">'c:\\\\design.aedt'</span>)
+                        </div>
+                        <p style="font-size: 13px; color: #666; margin-top: 5px;">Once initialized, the object (e.g., <code>hfss</code>) will appear in the <strong>Global Variables</strong> panel on the left.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h3 style="font-size: 16px; color: #0056b3; margin-bottom: 10px;">2. Explore & Inspect</h3>
+                            <ul style="padding-left: 20px; font-size: 14px; margin: 0;">
+                                <li style="margin-bottom: 8px;">Click variables in the <strong>Left Panel</strong> to inspect them.</li>
+                                <li style="margin-bottom: 8px;">View object details, values, and documentation in this <strong>Center Panel</strong>.</li>
+                                <li style="margin-bottom: 8px;">Browse properties and methods in the <strong>Right Panel</strong>.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 16px; color: #0056b3; margin-bottom: 10px;">3. Drill Down</h3>
+                            <ul style="padding-left: 20px; font-size: 14px; margin: 0;">
+                                <li style="margin-bottom: 8px;">Click on members in the Right Panel to drill down into child objects.</li>
+                                <li style="margin-bottom: 8px;">Use the <strong>Target</strong> bar at the top to see the current path.</li>
+                                <li style="margin-bottom: 8px;">Use <strong>Undo/Redo</strong> buttons to navigate your history.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
         };
 
         async function runConsole() {
