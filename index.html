@@ -445,6 +445,30 @@
         .show {
             display: block;
         }
+
+        /* Context Menu */
+        #context-menu {
+            display: none;
+            position: absolute;
+            z-index: 10000;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            border-radius: 4px;
+            padding: 5px 0;
+            min-width: 150px;
+        }
+
+        #context-menu .menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #333;
+        }
+
+        #context-menu .menu-item:hover {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 
@@ -555,6 +579,11 @@
     </div>
 
     <div id="bottom-panel-resizer" style="height: 5px; background: #ccc; cursor: ns-resize; flex-shrink: 0;"></div>
+
+    <div id="context-menu">
+        <div class="menu-item" id="ctx-print">Print to Console</div>
+        <div class="menu-item" id="ctx-copy">Copy to Clipboard</div>
+    </div>
 
     <!-- Bottom Panel: Console -->
     <div id="bottom-panel">
@@ -866,6 +895,69 @@
             renderMemberList(currentMembers, memberSearchInput.value);
         });
 
+        // --- Context Menu Logic ---
+        const contextMenu = document.getElementById('context-menu');
+        const ctxPrint = document.getElementById('ctx-print');
+        const ctxCopy = document.getElementById('ctx-copy');
+        let contextMenuTarget = null;
+
+        document.addEventListener('click', () => {
+            if (contextMenu) contextMenu.style.display = 'none';
+        });
+
+        const inspectorContent = document.getElementById('inspector-content');
+        
+        inspectorContent.addEventListener('contextmenu', (e) => {
+            const item = e.target.closest('.member-item');
+            if (item) {
+                e.preventDefault();
+                const path = item.getAttribute('data-path');
+                if (path) {
+                    contextMenuTarget = path;
+                    contextMenu.style.top = `${e.pageY}px`;
+                    contextMenu.style.left = `${e.pageX}px`;
+                    contextMenu.style.display = 'block';
+                }
+            }
+        });
+
+        ctxPrint.onclick = () => {
+            if (contextMenuTarget) {
+                const code = `print(${contextMenuTarget})`;
+                const consoleInput = document.getElementById('python-console-input');
+                consoleInput.value = code;
+                runConsole();
+            }
+        };
+
+        ctxCopy.onclick = async () => {
+            if (contextMenuTarget) {
+                try {
+                    const code = `print(${contextMenuTarget})`;
+                    const res = await callApi('evaluate', code);
+                    
+                    if (res && res.output) {
+                         let textToCopy = res.output;
+                         if (textToCopy.endsWith('\r\n')) textToCopy = textToCopy.slice(0, -2);
+                         else if (textToCopy.endsWith('\n')) textToCopy = textToCopy.slice(0, -1);
+
+                         if (navigator.clipboard && navigator.clipboard.writeText) {
+                             await navigator.clipboard.writeText(textToCopy);
+                         } else {
+                             const textArea = document.createElement("textarea");
+                             textArea.value = textToCopy;
+                             document.body.appendChild(textArea);
+                             textArea.select();
+                             document.execCommand("Copy");
+                             textArea.remove();
+                         }
+                    }
+                } catch (err) {
+                    console.error("Copy failed:", err);
+                }
+            }
+        };
+
         function renderInspectorContent(info) {
             const inspector = document.getElementById('inspector-content');
             inspector.innerHTML = '';
@@ -885,8 +977,11 @@
                     } else {
                         accessor = `[${item.index}]`;
                     }
+                    
+                    const fullPath = currentTarget + accessor;
+                    el.setAttribute('data-path', fullPath);
 
-                    el.onclick = () => setTarget(currentTarget + accessor);
+                    el.onclick = () => setTarget(fullPath);
                     inspector.appendChild(el);
                 });
             }
@@ -939,7 +1034,11 @@
                 el.className = 'member-item';
                 const kindLetter = m.kind.charAt(0).toUpperCase();
                 el.innerHTML = `<span class="member-kind kind-${m.kind}">${kindLetter}</span> <span class="member-name">${m.name}</span> <span class="member-type">${m.type}</span>`;
-                el.onclick = () => setTarget(currentTarget + "." + m.name);
+                
+                const fullPath = currentTarget + "." + m.name;
+                el.setAttribute('data-path', fullPath);
+                
+                el.onclick = () => setTarget(fullPath);
                 memberContainer.appendChild(el);
             });
         }

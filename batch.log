@@ -150,3 +150,389 @@ Starting Batch Run: 7:50:08 AM  Nov 27, 2025
 Running as user : ANSYS\mlin
 Temp directory: C:\Users\mlin\AppData\Local\Temp
 Project directory: D:\demo2
+The project 'Project8' has been edited and/or solved. Do you want to save the changes?
+-- Message Window --
+      *Global - Messages
+        [info] GRPC server running on port: 60247. 
+        [info] Project Project8 has been created.
+        [info] No design is present. Inserting a new design.
+        [info] Added design 'HFSS_SN0' of type HFSS.
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [warning] Property Command is read-only.
+        [warning] Property Command is read-only.
+        [info] No project is defined. Project Project8 exists and has been read.
+        [info] No consistent unique design is present. Inserting a new design.
+        [info] Added design 'Circuit Design_JVY' of type Circuit Design.
+        [info] Aedt Objects correctly read
+        [info] ModelerCircuit class has been initialized! Elapsed time: 0m 0sec
+        [info] ModelerNexxim class has been initialized!
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project8 exists and has been read.
+        [info] Active Design set to HFSS_SN0
+        [info] Active Design set to HFSS_SN0
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project8 exists and has been read.
+        [info] Active Design set to HFSS_SN0
+        [info] Active Design set to HFSS_SN0
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] Parsing design objects. This operation can take time
+        [info] Refreshing bodies from Object Info
+        [info] Bodies Info Refreshed Elapsed time: 0m 0sec
+        [info] 3D Modeler objects parsed. Elapsed time: 0m 0sec
+        [info] OpenGL Version: 4.6.0 - Build 32.0.101.6881
+        [info] The project 'Project8' has been edited and/or solved. Do you want to save the changes?
+      Project8 (D:/demo2/)
+        HFSS_SN0 (Terminal Network)
+          [error] Script macro error: Command is read only. (07:52:03 AM  Nov 27, 2025)
+          [error] Script macro error: Command is read only. (07:52:11 AM  Nov 27, 2025)
+-- Message Window --
+Stopping Batch Run: 11:12:35 AM  Nov 27, 2025
+ 
+Ansys Electronics Desktop Version 2025.2.0, Build: 2025-05-16 12:03:40
+Location: C:\Program Files\ANSYS Inc\v252\AnsysEM\ansysedt.exe
+Non Graphical Mode: No Project??
+Starting Batch Run: 9:39:27 AM  Dec 04, 2025
+Running as user : ANSYS\mlin
+Temp directory: C:\Users\mlin\AppData\Local\Temp
+Project directory: D:\demo2
+-- Message Window --
+      *Global - Messages
+        [info] GRPC server running on port: 53701. 
+        [info] Project Project4 has been created.
+        [info] No design is present. Inserting a new design.
+        [info] Added design 'Maxwell 3D_UT6' of type Maxwell 3D.
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project4 exists and has been read.
+        [info] Active Design set to Maxwell 3D_UT6
+        [info] Active Design set to Maxwell 3D_UT6
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] Mesh class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] PostProcessor class has been initialized! Elapsed time: 0m 0sec
+        [info] Post class has been initialized! Elapsed time: 0m 0sec
+        [info] Parsing design objects. This operation can take time
+        [info] Refreshing bodies from Object Info
+        [info] Bodies Info Refreshed Elapsed time: 0m 0sec
+        [info] 3D Modeler objects parsed. Elapsed time: 0m 0sec
+        [warning] Property Command is read-only.
+        [warning] Not enough vertices or non-planar face
+        [warning] Not enough vertices or non-planar face
+        [warning] Not enough vertices or non-planar face
+        [warning] Not enough vertices or non-planar face
+        [info] No project is defined. Project Project4 exists and has been read.
+        [info] Active Design set to Maxwell 3D_UT6
+        [info] Active Design set to Maxwell 3D_UT6
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Parsing design objects. This operation can take time
+        [info] Refreshing bodies from Object Info
+        [info] Bodies Info Refreshed Elapsed time: 0m 0sec
+        [info] 3D Modeler objects parsed. Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [warning] Property Command is read-only.
+        [info] No project is defined. Project Project5 exists and has been read.
+        [info] No consistent unique design is present. Inserting a new design.
+        [info] Added design 'Maxwell 3D_EQ6' of type Maxwell 3D.
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project5 exists and has been read.
+        [info] Active Design set to HFSSDesign1
+        [info] Active Design set to HFSSDesign1
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [info] Parsing design objects. This operation can take time
+        [info] Refreshing bodies from Object Info
+        [info] Bodies Info Refreshed Elapsed time: 0m 0sec
+        [info] 3D Modeler objects parsed. Elapsed time: 0m 0sec
+        [info] No project is defined. Project Project5 exists and has been read.
+        [info] Active Design set to Maxwell 3D_EQ6
+        [info] Active Design set to Maxwell 3D_EQ6
+        [info] Aedt Objects correctly read
+        [info] Modeler class has been initialized! Elapsed time: 0m 0sec
+        [info] Materials class has been initialized! Elapsed time: 0m 0sec
+        [error] **************************************************************
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\runpy.py", line 196, in _run_module_as_main
+        [error]     return _run_code(code, main_globals, None,
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\runpy.py", line 86, in _run_code
+        [error]     exec(code, run_globals)
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\asyncio\base_events.py", line 603, in run_forever
+        [error]     self._run_once()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\asyncio\base_events.py", line 1909, in _run_once
+        [error]     handle._run()
+        [error]   File "C:\Program Files\ANSYS Inc\v252\commonfiles\CPython\3_10\winx64\Release\python\lib\asyncio\events.py", line 80, in _run
+        [error]     self._context.run(self._callback, *self._args)
+        [error]   File "C:\Users\mlin\AppData\Local\Temp\ipykernel_31592\1968736761.py", line 1, in <module>
+        [error]     maxwell.modeler.create_helix(assignment=x.name,
+        [error] AEDT API Error on create_helix
+        [error] Last Electronics Desktop Message - [
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - ]
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message - c
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - i
+        [error] Last Electronics Desktop Message - p
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - m
+        [error] Last Electronics Desktop Message - a
+        [error] Last Electronics Desktop Message - c
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - :
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - l
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - c
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message - i
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - n
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message - :
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - p
+        [error] Last Electronics Desktop Message - a
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - w
+        [error] Last Electronics Desktop Message - i
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message - h
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - n
+        [error] Last Electronics Desktop Message - a
+        [error] Last Electronics Desktop Message - m
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - n
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - w
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - b
+        [error] Last Electronics Desktop Message - j
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - c
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message - _
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message - w
+        [error] Last Electronics Desktop Message - 9
+        [error] Last Electronics Desktop Message - k
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - p
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - i
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - n
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - f
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - u
+        [error] Last Electronics Desktop Message - n
+        [error] Last Electronics Desktop Message - d
+        [error] Last Electronics Desktop Message - !
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - l
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - c
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message - i
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - n
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message - :
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - a
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - l
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - a
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - n
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - p
+        [error] Last Electronics Desktop Message - a
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message - h
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - u
+        [error] Last Electronics Desktop Message - l
+        [error] Last Electronics Desktop Message - d
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - b
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - s
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - l
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - c
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - d
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - f
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message - h
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - p
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - r
+        [error] Last Electronics Desktop Message - a
+        [error] Last Electronics Desktop Message - t
+        [error] Last Electronics Desktop Message - i
+        [error] Last Electronics Desktop Message - o
+        [error] Last Electronics Desktop Message - n
+        [error] Last Electronics Desktop Message - .
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - (
+        [error] Last Electronics Desktop Message - 1
+        [error] Last Electronics Desktop Message - 0
+        [error] Last Electronics Desktop Message - :
+        [error] Last Electronics Desktop Message - 5
+        [error] Last Electronics Desktop Message - 8
+        [error] Last Electronics Desktop Message - :
+        [error] Last Electronics Desktop Message - 5
+        [error] Last Electronics Desktop Message - 4
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - a
+        [error] Last Electronics Desktop Message - m
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - d
+        [error] Last Electronics Desktop Message - e
+        [error] Last Electronics Desktop Message - c
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - 0
+        [error] Last Electronics Desktop Message - 4
+        [error] Last Electronics Desktop Message - ,
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message - 2
+        [error] Last Electronics Desktop Message - 0
+        [error] Last Electronics Desktop Message - 2
+        [error] Last Electronics Desktop Message - 5
+        [error] Last Electronics Desktop Message - )
+        [error] Last Electronics Desktop Message -  
+        [error] Last Electronics Desktop Message -  
+        [error] Method arguments: 
+        [error]     assignment = NewObject_SW9KEP 
+        [error]     origin = [-6, 0, 0] 
+        [error]     z_start_dir = 4 
+        [error]     turns = 10 
+        [error]     right_hand = True 
+        [error]     thread = 1.0 
+        [error] **************************************************************
+        [info] OpenGL Version: 4.6.0 - Build 32.0.101.6881
+      Project4 (D:/demo2/)
+        Maxwell 3D_UT6 (Magnetostatic)
+          [error] Script macro error: Command is read only. (09:41:00 AM  Dec 04, 2025)
+          [error] Script macro error: Command is read only. (10:38:30 AM  Dec 04, 2025)
+      Project5 (D:/demo2/)
+        HFSSDesign1 (Terminal Network)
+          [error] Parasolid Error: Sweep failed function PK_BODY_make_swept_body_2 type PK_BODY_sweep_geom_self_int_c.  (10:40:11 AM  Dec 04, 2025)
+          [error] Body could not be created for part because of invalid parameters to CreateHelix operation. (10:40:11 AM  Dec 04, 2025)
+          [error] Parasolid Error: Sweep failed function PK_BODY_make_swept_body_2 type PK_BODY_sweep_geom_self_int_c.  (10:41:35 AM  Dec 04, 2025)
+          [error] Body could not be created for part Rectangle1 because of invalid parameters of this part or some of its parent part/coordinate system. (10:41:35 AM  Dec 04, 2025)
+          [error] Parasolid Error: Sweep failed function PK_BODY_make_swept_body_2 type PK_BODY_sweep_geom_self_int_c.  (10:42:06 AM  Dec 04, 2025)
+          [error] Body could not be created for part Rectangle1 because of invalid parameters of this part or some of its parent part/coordinate system. (10:42:06 AM  Dec 04, 2025)
+          [warning] Parasolid Warning: Unable to transport profile to correct sweep start position. Please make sure the closest point to profile is at the start of path. (10:51:07 AM  Dec 04, 2025)
+          [error] Parasolid Error: Sweep failed function PK_BODY_make_swept_body_2 type PK_BODY_sweep_geom_self_int_c.  (10:51:14 AM  Dec 04, 2025)
+          [error] Body could not be created for part Rectangle1 because of invalid parameters of this part or some of its parent part/coordinate system. (10:51:15 AM  Dec 04, 2025)
+        Maxwell 3D_EQ6 (Magnetostatic)
+          [error] Script macro error: Selections: Part with name NewObject_SW9KEP is not found! Selections: At least one part should be selected for the operation.  (10:58:54 AM  Dec 04, 2025)
+-- Message Window --
+Stopping Batch Run: 1:13:08 PM  Dec 04, 2025
+ 
+Ansys Electronics Desktop Version 2025.2.0, Build: 2025-05-16 12:03:40
+Location: C:\Program Files\ANSYS Inc\v252\AnsysEM\ansysedt.exe
+Non Graphical Mode: No Project??
+Starting Batch Run: 3:20:21 PM  Dec 04, 2025
+Running as user : ANSYS\mlin
+Temp directory: C:\Users\mlin\AppData\Local\Temp
+Project directory: D:\demo2
+The project 'Project4' has been edited and/or solved. Do you want to save the changes?
+-- Message Window --
+      *Global - Messages
+        [error] Error in command execution
+        [error] Error in command execution
+        [error] Error in command execution
+        [error] Error in command execution
+        [info] The project 'Project4' has been edited and/or solved. Do you want to save the changes?
+      Project4 (D:/demo2/)
+        Circuit Netlist_HXL
+          [error] Script macro error: CSScript.SetActiveEditor: Can't locate editor: Text (03:58:06 PM  Dec 04, 2025)
+          [error] Script macro error: CSScript.SetActiveEditor: Can't locate editor: Netlist (04:02:42 PM  Dec 04, 2025)
+          [error] Script macro error: CSScript.SetActiveEditor: Can't locate editor: Text (04:02:53 PM  Dec 04, 2025)
+          [error] Script macro error: CSScript.SetActiveEditor: Can't locate editor: Schematic (04:04:23 PM  Dec 04, 2025)
+          [error] Script macro error: CSScript.SetActiveEditor: Can't locate editor: Note (04:04:28 PM  Dec 04, 2025)
+-- Message Window --
+Stopping Batch Run: 4:11:22 PM  Dec 04, 2025
