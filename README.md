@@ -58,6 +58,9 @@ Once the installation is complete, you can launch the EDB Explorer GUI:
     -   **Undo/Redo Navigation**: Use the "Undo" and "Redo" buttons (to the right of the "Target" input) to navigate through your inspection history.
 
     -   **Filter Members**: Use the regex input field in the "Members / Inspector" panel to filter the displayed properties and methods.
+    -   **Context Menu**: Right-click on any item in the "Members / Inspector" list to access options:
+        -   **Print to Console**: Prints the item's value to the Python console.
+        -   **Copy to Clipboard**: Copies the item's value to your clipboard.
 
 5.  **Loading EDB Files**:
     -   **Import**: Click the "Import" button to open a file dialog and select a different `.aedb` folder to load.
@@ -68,6 +71,8 @@ Once the installation is complete, you can launch the EDB Explorer GUI:
     -   Type Python code into the input field at the bottom.
     -   Press `Enter` to execute. (Use `Shift+Enter` for multi-line input without immediate execution).
     -   Output and errors will be displayed in the console output area.
+
+    -   **Copy Output**: You can select text in the console output and copy it using `Ctrl+C` or the context menu.
     -   Variables defined in the console (e.g., `my_var = 123`) will appear in the "Global Variables" panel after execution.
 
 7.  **Tunable Panel Borders**:
