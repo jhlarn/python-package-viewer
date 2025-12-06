@@ -4,5 +4,5 @@ if not exist .venv (
     pause
     exit /b
 )
-start "" ".venv\Scripts\pythonw.exe" main.py
+start "" ".venv\Scripts\python.exe" main.py
 exit
