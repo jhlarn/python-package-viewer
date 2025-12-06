@@ -11,12 +11,12 @@ class Api:
     def __init__(self):
         self.globals = {}
         self.current_edb_path = "pcb.aedb"
-        self.window = None
+        self._window = None
         self.config_path = "config.json"
         # Defer EDB loading to prevent CLR conflicts during startup
 
     def set_window(self, window):
-        self.window = window
+        self._window = window
         
     def _load_config(self):
         if os.path.exists(self.config_path):
@@ -46,11 +46,11 @@ class Api:
         return config
 
     def pick_edb_folder(self):
-        if not self.window:
+        if not self._window:
             return {"status": "error", "message": "Window not attached."}
         
         # Open folder dialog
-        result = self.window.create_file_dialog(webview.FOLDER_DIALOG)
+        result = self._window.create_file_dialog(webview.FOLDER_DIALOG)
         if result and len(result) > 0:
             new_path = result[0]
             return self.load_edb(new_path)
